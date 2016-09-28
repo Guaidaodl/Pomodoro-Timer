@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">PomodoroTimer</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="main_tab_timer">计时器</string>
+    <string name="main_tab_todo_today">今日待办</string>
+    <string name="main_tab_action_list">活动清单</string>
+
+    <!-- Timer -->
+    <string name="main_timer_start">开始</string>
+    <string name="main_timer_stop">中断</string>
+    <string name="main_timer_default_time">25:00</string>
+</resources>
