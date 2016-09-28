@@ -1,6 +1,9 @@
 package guaidaodl.github.io.pomodorotimer.ui.main;
 
+import android.content.ComponentName;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +14,7 @@ import android.view.MenuItem;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import guaidaodl.github.io.pomodorotimer.R;
+import guaidaodl.github.io.pomodorotimer.service.PomodoroService;
 
 public class MainActivity extends AppCompatActivity {
     @BindView(R.id.main_pager)
@@ -18,6 +22,18 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.main_tab)
     TabLayout mMainTabLayout;
+
+    private PomodoroService.PomodoroBinder mPomodoroBinder;
+    private ServiceConnection mPomodoroServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mPomodoroBinder = (PomodoroService.PomodoroBinder) service;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
 
         mMainViewPager.setAdapter(new MainPagerAdapter(this, getSupportFragmentManager()));
         mMainTabLayout.setupWithViewPager(mMainViewPager);
+
+        PomodoroService.bind(this, mPomodoroServiceConnection);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package guaidaodl.github.io.pomodorotimer.ui.timer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,6 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import guaidaodl.github.io.pomodorotimer.R;
+import guaidaodl.github.io.pomodorotimer.service.PomodoroService;
 import guaidaodl.github.io.pomodorotimer.utils.RxCountDownTimer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -26,7 +28,7 @@ public class TimerFragment extends Fragment {
 
     private static final String INTIAL_TIME = "25:00";
 
-    @BindView(R.id.main_timer_start)
+    @BindView(R.id.main_timer_control)
     Button mStartButton;
 
     @BindString(R.string.main_timer_start)
@@ -38,11 +40,11 @@ public class TimerFragment extends Fragment {
     @BindView(R.id.main_timer_time)
     TextView mTimeText;
 
-    @Nullable
-    private TimeSuscriber mTimeSuscriber;
+    @Nullable private TimeSuscriber mTimeSuscriber;
 
-    @NonNull
-    private String mCurrentTime = INTIAL_TIME;
+    @NonNull private String mCurrentTime = INTIAL_TIME;
+
+    @Nullable private TimerFragmentDelegate mDelegate;
 
     public static TimerFragment newInstance() {
         return new TimerFragment();
@@ -51,10 +53,20 @@ public class TimerFragment extends Fragment {
     public TimerFragment() {
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            mDelegate = (TimerFragmentDelegate)context;
+        } catch (ClassCastException e) {
+            throw new IllegalStateException()
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView");
         View root = inflater.inflate(R.layout.fragment_timer, container, false);
 
         ButterKnife.bind(this, root);
@@ -69,14 +81,13 @@ public class TimerFragment extends Fragment {
      */
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy");
         if (mTimeSuscriber != null) {
             mTimeSuscriber.unsubscribe();
         }
     }
 
 
-    @OnClick(R.id.main_timer_start)
+    @OnClick(R.id.main_timer_control)
     public void onClickStartButton() {
         if (mTimeSuscriber != null) {
             mTimeSuscriber.unsubscribe();
@@ -90,6 +101,21 @@ public class TimerFragment extends Fragment {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(mTimeSuscriber);
         }
+    }
+
+    @OnClick(R.id.main_timer_start_service)
+    public void onClickPlayButton() {
+        Intent intent = new Intent(getContext(), PomodoroService.class);
+
+        getActivity().startService(intent);
+    }
+
+    @OnClick(R.id.main_timer_stop_service)
+    public void onClickStopButton() {
+        Intent intent = new Intent(getContext(), PomodoroService.class);
+
+        getActivity().stopService(intent);
+
     }
 
     private class TimeSuscriber extends Subscriber<String> {
@@ -107,5 +133,10 @@ public class TimerFragment extends Fragment {
             mCurrentTime = time;
             mTimeText.setText(time);
         }
-    };
+    }
+
+    public interface TimerFragmentDelegate {
+        void startNewTomato();
+        void stopTimer();
+    }
 }
