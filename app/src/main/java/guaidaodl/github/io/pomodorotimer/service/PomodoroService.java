@@ -9,12 +9,12 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import guaidaodl.github.io.pomodorotimer.R;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -24,6 +24,14 @@ public class PomodoroService extends Service {
 
     /** 当前番茄的总时长，单位是秒 */
     private int mTomatoTime = 0;
+
+    @Nullable private MediaPlayer mMediaPlayer;
+
+    /** 定时器的订阅者 */
+    @Nullable
+    private TimeSuscriber mTimeSuscriber;
+
+    private PomodoroBinder mBinder = new PomodoroBinder();
 
     public static void start(Context context) {
         Intent intent = new Intent(context, PomodoroService.class);
@@ -41,13 +49,12 @@ public class PomodoroService extends Service {
         context.unbindService(conn);
     }
 
-    private MediaPlayer mMediaPlayer;
-
-    /** 定时器的订阅者 */
-    @Nullable
-    private TimeSuscriber mTimeSuscriber;
-
-    private PomodoroBinder mBinder = new PomodoroBinder();
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.water_flow);
+        mMediaPlayer.setLooping(true);
+    }
 
     @Nullable
     @Override
@@ -60,8 +67,23 @@ public class PomodoroService extends Service {
         if (mTimeSuscriber != null) {
             mTimeSuscriber.unsubscribe();
         }
+        if (mMediaPlayer != null) {
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
     }
 
+    private void playBGM() {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.start();
+        }
+    }
+
+    private void stopBGM() {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.pause();
+        }
+    }
     public class PomodoroBinder extends Binder {
         /**
          * 开始一个新的番茄定时器。如果已经有先有的定时器，则会先取消原来的定时器。
@@ -82,6 +104,8 @@ public class PomodoroService extends Service {
             for (TomatoStateListener listener : mListeners) {
                 listener.onTomatoStart();
             }
+
+            playBGM();
         }
 
         /**
@@ -92,6 +116,8 @@ public class PomodoroService extends Service {
                 mTimeSuscriber.unsubscribe();
                 mTimeSuscriber = null;
             }
+
+            stopBGM();
         }
 
         public void registerTimeChangeListener(TomatoStateListener listener) {
@@ -123,13 +149,19 @@ public class PomodoroService extends Service {
             for (TomatoStateListener listener : mListeners) {
                 listener.onTomatoFinish();
             }
-            mTimeSuscriber.unsubscribe();
-            mTimeSuscriber = null;
+            if (mTimeSuscriber != null) {
+                mTimeSuscriber.unsubscribe();
+                mTimeSuscriber = null;
+            }
+
+            stopBGM();
         }
 
         @Override
         public void onError(Throwable e) {
             e.printStackTrace();
+
+            stopBGM();
         }
 
         @Override
