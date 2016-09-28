@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.Locale;
+
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,7 +25,7 @@ import guaidaodl.github.io.pomodorotimer.utils.RxCountDownTimer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 
-public class TimerFragment extends Fragment {
+public class TimerFragment extends Fragment implements PomodoroService.TomatoStateListener{
     private static final String TAG = "TimerFragment";
 
     private static final String INTIAL_TIME = "25:00";
@@ -38,21 +40,21 @@ public class TimerFragment extends Fragment {
     String mStopText;
 
     @BindView(R.id.main_timer_time)
-    TextView mTimeText;
-
-    @Nullable private TimeSuscriber mTimeSuscriber;
+    TextView mTimeTextView;
 
     @NonNull private String mCurrentTime = INTIAL_TIME;
 
-    @Nullable private TimerFragmentDelegate mDelegate;
+    private TimerFragmentDelegate mDelegate;
+
+    private boolean mTimerRunning = false;
 
     public static TimerFragment newInstance() {
         return new TimerFragment();
     }
 
-    public TimerFragment() {
-    }
+    public TimerFragment() {}
 
+    //<editor-fold desc="Life Cycle">
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -60,7 +62,8 @@ public class TimerFragment extends Fragment {
         try {
             mDelegate = (TimerFragmentDelegate)context;
         } catch (ClassCastException e) {
-            throw new IllegalStateException()
+            throw new RuntimeException(context.toString()
+                    + " must implement TimerFragmentDelegate");
         }
     }
 
@@ -71,9 +74,15 @@ public class TimerFragment extends Fragment {
 
         ButterKnife.bind(this, root);
 
-        mStartButton.setText(mTimeSuscriber == null ? mStartText : mStopText);
-        mTimeText.setText(mCurrentTime);
+        mStartButton.setText(!mTimerRunning ? mStartText : mStopText);
+        mTimeTextView.setText(mCurrentTime);
         return root;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mDelegate.registerTomatoListner(this);
     }
 
     /**
@@ -81,62 +90,69 @@ public class TimerFragment extends Fragment {
      */
     public void onDestroy() {
         super.onDestroy();
-        if (mTimeSuscriber != null) {
-            mTimeSuscriber.unsubscribe();
-        }
+        mDelegate.unregisterTomatoListener(this);
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if (mDelegate != null) {
+            mDelegate = null;
+        }
+    }
+    //</editor-fold>
 
     @OnClick(R.id.main_timer_control)
     public void onClickStartButton() {
-        if (mTimeSuscriber != null) {
-            mTimeSuscriber.unsubscribe();
-            mTimeText.setText(INTIAL_TIME);
-            mStartButton.setText(getContext().getString(R.string.main_timer_start));
-            mTimeSuscriber = null;
+        if (mTimerRunning) {
+            // 结束番茄
+            mTimerRunning = false;
+            resetViews();
+            mDelegate.stopTomato();
         } else {
+            // 开始番茄
             mStartButton.setText(getContext().getString(R.string.main_timer_stop));
-            mTimeSuscriber = new TimeSuscriber();
-            RxCountDownTimer.newCountDownTimer(25 * 60)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(mTimeSuscriber);
+            mDelegate.startNewTomato();
+            mTimerRunning = true;
         }
     }
 
-    @OnClick(R.id.main_timer_start_service)
-    public void onClickPlayButton() {
-        Intent intent = new Intent(getContext(), PomodoroService.class);
 
-        getActivity().startService(intent);
+    //<editor-fold desc="Implementation of TomatoStatListner">
+    @Override
+    public void onTomatoStart() {
+        mStartButton.setText(mStopText);
+        mTimerRunning = true;
     }
 
-    @OnClick(R.id.main_timer_stop_service)
-    public void onClickStopButton() {
-        Intent intent = new Intent(getContext(), PomodoroService.class);
-
-        getActivity().stopService(intent);
-
+    @Override
+    public void onTomatoFinish() {
+        mTimerRunning = false;
+        resetViews();
     }
 
-    private class TimeSuscriber extends Subscriber<String> {
-        @Override
-        public void onCompleted() {
-            Log.d(TAG, "completed");
-        }
-
-        @Override
-        public void onError(Throwable e) {
-        }
-
-        @Override
-        public void onNext(String time) {
-            mCurrentTime = time;
-            mTimeText.setText(time);
-        }
+    private void resetViews() {
+        mCurrentTime = INTIAL_TIME;
+        mTimeTextView.setText(INTIAL_TIME);
+        mStartButton.setText(mStartText);
     }
+
+    @Override
+    public void onTomatoTimeChange(int remainTime, int tomatoTime) {
+        long minute = remainTime / 60;
+        long second = remainTime % 60;
+
+        @SuppressWarnings("deprecation")
+        Locale locale = getResources().getConfiguration().locale;
+        mCurrentTime = String.format(locale, "%02d:%02d", minute, second);
+        mTimeTextView.setText(mCurrentTime);
+    }
+    //</editor-fold>
 
     public interface TimerFragmentDelegate {
         void startNewTomato();
-        void stopTimer();
+        void stopTomato();
+        void registerTomatoListner(PomodoroService.TomatoStateListener listener);
+        void unregisterTomatoListener(PomodoroService.TomatoStateListener listener);
     }
 }

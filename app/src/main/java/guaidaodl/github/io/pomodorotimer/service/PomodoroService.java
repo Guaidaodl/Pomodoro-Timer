@@ -11,17 +11,19 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import guaidaodl.github.io.pomodorotimer.utils.RxCountDownTimer;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 
-/**
- * Created by linyb on 28/09/2016.
- */
-
 public class PomodoroService extends Service {
-    private final static String TAG = "PomodoroService";
-    private final static int DEFAULT_TOMATO_TIME = 25 * 60;
+    private List<TomatoStateListener> mListeners = new LinkedList<>();
+
+    /** 当前番茄的总时长，单位是秒 */
+    private int mTomatoTime = 0;
 
     public static void start(Context context) {
         Intent intent = new Intent(context, PomodoroService.class);
@@ -35,6 +37,10 @@ public class PomodoroService extends Service {
         context.bindService(intent, conn, BIND_AUTO_CREATE);
     }
 
+    public static void unbind(@NonNull Context context, @NonNull ServiceConnection conn) {
+        context.unbindService(conn);
+    }
+
     private MediaPlayer mMediaPlayer;
 
     /** 定时器的订阅者 */
@@ -43,43 +49,39 @@ public class PomodoroService extends Service {
 
     private PomodoroBinder mBinder = new PomodoroBinder();
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Log.d(TAG, "onCreate");
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand");
-        return super.onStartCommand(intent, flags, startId);
-    }
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d(TAG, "onBind");
         return mBinder;
     }
 
-    @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy");
+        if (mTimeSuscriber != null) {
+            mTimeSuscriber.unsubscribe();
+        }
     }
 
     public class PomodoroBinder extends Binder {
         /**
          * 开始一个新的番茄定时器。如果已经有先有的定时器，则会先取消原来的定时器。
+         *
+         * @param minutes 番茄定时器的时间长度
          */
-        public void startNewTomato() {
+        public void startNewTomato(int minutes) {
             if (mTimeSuscriber != null) {
                 mTimeSuscriber.unsubscribe();
             }
+            mTomatoTime = minutes * 60;
             mTimeSuscriber = new TimeSuscriber();
-            RxCountDownTimer.newCountDownTimer(DEFAULT_TOMATO_TIME)
+            Observable.interval(1, TimeUnit.SECONDS)
+                    .take(minutes * 60)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(mTimeSuscriber);
+
+            for (TomatoStateListener listener : mListeners) {
+                listener.onTomatoStart();
+            }
         }
 
         /**
@@ -88,22 +90,55 @@ public class PomodoroService extends Service {
         public void stopTomato() {
             if (mTimeSuscriber != null) {
                 mTimeSuscriber.unsubscribe();
+                mTimeSuscriber = null;
             }
+        }
+
+        public void registerTimeChangeListener(TomatoStateListener listener) {
+            // 补发一个番茄钟已经开始的消息。
+            if (mTimeSuscriber != null) {
+                listener.onTomatoStart();
+            }
+            mListeners.add(listener);
+        }
+
+        public void unregisterTimeChangeListener(TomatoStateListener listener) {
+            mListeners.remove(listener);
         }
     }
 
-    private class TimeSuscriber extends Subscriber<String> {
+    /**
+     * 番茄状态的 Listener, 所有的回调都会在主线程调用。
+     */
+    public interface TomatoStateListener {
+        void onTomatoStart();
+        void onTomatoFinish();
+        void onTomatoTimeChange(int remainTime, int tomatoTime);
+    }
+
+    private class TimeSuscriber extends Subscriber<Long> {
+
         @Override
         public void onCompleted() {
+            for (TomatoStateListener listener : mListeners) {
+                listener.onTomatoFinish();
+            }
+            mTimeSuscriber.unsubscribe();
+            mTimeSuscriber = null;
         }
 
         @Override
         public void onError(Throwable e) {
+            e.printStackTrace();
         }
 
         @Override
-        public void onNext(String time) {
-            Log.d(TAG, time);
+        public void onNext(Long time) {
+            /* 当前番茄的剩余时间，单位是秒 */
+            int remainTime = mTomatoTime - time.intValue() - 1;
+            for (TomatoStateListener listener : mListeners) {
+                listener.onTomatoTimeChange(remainTime, mTomatoTime);
+            }
         }
-    };
+    }
 }

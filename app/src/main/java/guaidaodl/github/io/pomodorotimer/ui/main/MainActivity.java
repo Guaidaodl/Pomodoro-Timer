@@ -11,12 +11,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import guaidaodl.github.io.pomodorotimer.R;
 import guaidaodl.github.io.pomodorotimer.service.PomodoroService;
+import guaidaodl.github.io.pomodorotimer.ui.timer.TimerFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TimerFragment.TimerFragmentDelegate {
     @BindView(R.id.main_pager)
     ViewPager mMainViewPager;
 
@@ -24,10 +28,15 @@ public class MainActivity extends AppCompatActivity {
     TabLayout mMainTabLayout;
 
     private PomodoroService.PomodoroBinder mPomodoroBinder;
+    private List<PomodoroService.TomatoStateListener> mPendingListners = new LinkedList<>();
     private ServiceConnection mPomodoroServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mPomodoroBinder = (PomodoroService.PomodoroBinder) service;
+            for (PomodoroService.TomatoStateListener listener : mPendingListners) {
+                mPomodoroBinder.registerTimeChangeListener(listener);
+            }
+            mPendingListners.clear();
         }
 
         @Override
@@ -71,5 +80,41 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PomodoroService.unbind(this, mPomodoroServiceConnection);
+    }
+
+    //<editor-fold desc="Implemation of TimerFragmentDelegate">
+    @Override
+    public void startNewTomato() {
+        mPomodoroBinder.startNewTomato(25);
+    }
+
+    @Override
+    public void stopTomato() {
+        mPomodoroBinder.stopTomato();
+    }
+
+    /**
+     * 像 Service 注册 TomatoListner，如果 mPomodoroBinder 还为空，则将 listener 放入一个
+     * pennding 的列表中，等到 Activity 跟 Service 绑定后再注册。
+     */
+    @Override
+    public void registerTomatoListner(PomodoroService.TomatoStateListener listener) {
+        if (mPomodoroBinder != null) {
+            mPomodoroBinder.registerTimeChangeListener(listener);
+        } else {
+            mPendingListners.add(listener);
+        }
+    }
+
+    @Override
+    public void unregisterTomatoListener(PomodoroService.TomatoStateListener listener) {
+        mPomodoroBinder.unregisterTimeChangeListener(listener);
+    }
+    //</editor-fold>
 
 }
