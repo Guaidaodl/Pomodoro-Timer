@@ -27,7 +27,7 @@ dependencies {
     })
 
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
-
+    // common
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'
     compile 'com.jakewharton:butterknife:8.4.0'
@@ -36,5 +36,13 @@ dependencies {
     compile 'io.reactivex:rxjava:1.2.0'
     compile 'io.reactivex:rxandroid:1.2.1'
 
+    // debug
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
+
+    // release
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
+
+    // test
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
     testCompile 'junit:junit:4.12'
 }
