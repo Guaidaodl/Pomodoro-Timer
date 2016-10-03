@@ -69,7 +69,7 @@ public class PomodoroService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.water_flow);
+        mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.tick);
         mMediaPlayer.setLooping(true);
     }
 
