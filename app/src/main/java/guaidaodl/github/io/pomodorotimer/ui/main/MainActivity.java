@@ -18,6 +18,7 @@
 package guaidaodl.github.io.pomodorotimer.ui.main;
 
 import android.content.ComponentName;
+import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -74,6 +75,12 @@ public class MainActivity extends AppCompatActivity implements TimerFragment.Tim
         mMainTabLayout.setupWithViewPager(mMainViewPager);
 
         PomodoroService.bind(this, mPomodoroServiceConnection);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        mMainViewPager.setCurrentItem(0, true);
     }
 
     @Override

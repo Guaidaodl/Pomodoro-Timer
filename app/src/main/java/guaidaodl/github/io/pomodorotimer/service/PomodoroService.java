@@ -17,6 +17,8 @@
 
 package guaidaodl.github.io.pomodorotimer.service;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -33,11 +35,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import guaidaodl.github.io.pomodorotimer.R;
+import guaidaodl.github.io.pomodorotimer.ui.main.MainActivity;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 
 public class PomodoroService extends Service {
+    private static final int NOTIFICATION_ID = 1;
     private List<WeakReference<TomatoStateListener>> mListeners = new LinkedList<>();
 
     /** 当前番茄的总时长，单位是秒 */
@@ -72,6 +76,20 @@ public class PomodoroService extends Service {
         super.onCreate();
         mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.tick);
         mMediaPlayer.setLooping(true);
+    }
+
+    private void startForeground() {
+        Notification.Builder notificationBuilder = new Notification.Builder(getApplicationContext());
+        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
+                        new Intent(getApplicationContext(), MainActivity.class),
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification notification = notificationBuilder.setSmallIcon(R.mipmap.ic_launcher)
+                                                       .setTicker("Test Notification")
+                                                       .setContentIntent(pi)
+                                                       .build();
+
+        startForeground(NOTIFICATION_ID, notification);
     }
 
     @Nullable
@@ -126,6 +144,7 @@ public class PomodoroService extends Service {
             }
 
             playBGM();
+            startForeground();
         }
 
         /**
@@ -138,6 +157,7 @@ public class PomodoroService extends Service {
             }
 
             stopBGM();
+            stopForeground(true);
         }
 
         /**
