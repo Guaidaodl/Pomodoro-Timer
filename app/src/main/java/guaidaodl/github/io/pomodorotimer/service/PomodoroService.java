@@ -27,6 +27,7 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +38,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 
 public class PomodoroService extends Service {
-    private List<TomatoStateListener> mListeners = new LinkedList<>();
+    private List<WeakReference<TomatoStateListener>> mListeners = new LinkedList<>();
 
     /** 当前番茄的总时长，单位是秒 */
     private int mTomatoTime = 0;
@@ -118,8 +119,10 @@ public class PomodoroService extends Service {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(mTimeSuscriber);
 
-            for (TomatoStateListener listener : mListeners) {
-                listener.onTomatoStart();
+            for (WeakReference<TomatoStateListener> listenerRef : mListeners) {
+                if (listenerRef.get() != null) {
+                    listenerRef.get().onTomatoStart();
+                }
             }
 
             playBGM();
@@ -137,16 +140,34 @@ public class PomodoroService extends Service {
             stopBGM();
         }
 
-        public void registerTimeChangeListener(TomatoStateListener listener) {
+        /**
+         * 注册一个 Listner，每一个调用该方法的地方，都应该有一个配对的 {@link #unregisterTimeChangeListener}
+         * 的调用。
+         *
+         * 为了防止没有释放，listener 在内部会以弱引用的方式保存，listener 的持有者必须自己保证在 unregister
+         * 之前，对象都是存活的。
+         * @param listener
+         */
+        public void registerTimeChangeListener(@NonNull TomatoStateListener listener) {
             // 补发一个番茄钟已经开始的消息。
             if (mTimeSuscriber != null) {
                 listener.onTomatoStart();
             }
-            mListeners.add(listener);
+            mListeners.add(new WeakReference<>(listener));
         }
 
-        public void unregisterTimeChangeListener(TomatoStateListener listener) {
-            mListeners.remove(listener);
+        public void unregisterTimeChangeListener(@NonNull TomatoStateListener listener) {
+            WeakReference<TomatoStateListener> findRef = null;
+            for (WeakReference<TomatoStateListener> listenerRef : mListeners) {
+                if (listenerRef.get() == listener) {
+                    findRef = listenerRef;
+                    break;
+                }
+            }
+
+            if (findRef != null) {
+                mListeners.remove(findRef);
+            }
         }
     }
 
@@ -163,8 +184,10 @@ public class PomodoroService extends Service {
 
         @Override
         public void onCompleted() {
-            for (TomatoStateListener listener : mListeners) {
-                listener.onTomatoFinish();
+            for (WeakReference<TomatoStateListener> listenerRef : mListeners) {
+                if (listenerRef.get() != null) {
+                    listenerRef.get().onTomatoFinish();
+                }
             }
             if (mTimeSuscriber != null) {
                 mTimeSuscriber.unsubscribe();
@@ -185,8 +208,10 @@ public class PomodoroService extends Service {
         public void onNext(Long time) {
             /* 当前番茄的剩余时间，单位是秒 */
             int remainTime = mTomatoTime - time.intValue() - 1;
-            for (TomatoStateListener listener : mListeners) {
-                listener.onTomatoTimeChange(remainTime, mTomatoTime);
+            for (WeakReference<TomatoStateListener> listenerRef : mListeners) {
+                if (listenerRef.get() != null) {
+                    listenerRef.get().onTomatoTimeChange(remainTime, mTomatoTime);
+                }
             }
         }
     }
