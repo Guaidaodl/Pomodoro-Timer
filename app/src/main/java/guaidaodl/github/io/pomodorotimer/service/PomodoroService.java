@@ -23,6 +23,8 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
@@ -84,7 +86,7 @@ public class PomodoroService extends Service {
                         new Intent(getApplicationContext(), MainActivity.class),
                         PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification notification = notificationBuilder.setSmallIcon(R.mipmap.ic_launcher)
+        Notification notification = notificationBuilder.setSmallIcon(R.drawable.ic_nofication)
                                                        .setTicker("Test Notification")
                                                        .setContentIntent(pi)
                                                        .build();

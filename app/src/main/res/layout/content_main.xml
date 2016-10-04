@@ -27,12 +27,4 @@
     tools:context="guaidaodl.github.io.pomodorotimer.ui.main.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/main.tab"
-        android:background="@color/colorPrimary"
-        app:tabTextColor="@color/colorIconAndText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top" />
-
 </android.support.v4.view.ViewPager>

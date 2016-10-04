@@ -17,12 +17,14 @@
   -->
 
 <resources>
-    <color name="colorPrimary">#2196F3</color>
-    <color name="colorPrimaryDark">#1976D2</color>
-    <color name="colorPrimarylight">#BBDEFB</color>
-    <color name="colorAccent">#FF5722</color>
-    <color name="colorPrimaryText">#212121</color>
-    <color name="colorSecondaryText">#757575</color>
-    <color name="colorIconAndText">#FFFFFF</color>
+
+    <color name="primaryColor">#2196F3</color>
+    <color name="primaryDarkColor">#1976D2</color>
+    <color name="primaryColorLight">#BBDEFB</color>
+    <color name="accentColor">#FF5722</color>
+    <color name="primaryTextColor">#FFFFFF</color>
+    <color name="secondaryTextColor">#CAE1F4</color>
+    <color name="iconAndTextColor">#FFFFFF</color>
     <color name="divider">#BDBDBD</color>
+
 </resources>

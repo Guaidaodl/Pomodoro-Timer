@@ -20,9 +20,9 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorAccent">@color/accentColor</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -34,4 +34,9 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
+    <style name="MainTabTextSize" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="textAllCaps">true</item>
+    </style>
 </resources>
