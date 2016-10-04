@@ -23,8 +23,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
@@ -37,6 +35,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import guaidaodl.github.io.pomodorotimer.R;
+import guaidaodl.github.io.pomodorotimer.model.factory.ModelFactory;
 import guaidaodl.github.io.pomodorotimer.ui.main.MainActivity;
 import rx.Observable;
 import rx.Subscriber;
@@ -111,6 +110,18 @@ public class PomodoroService extends Service {
         }
     }
 
+    /**
+     * 当番茄中被中断或者完成的时候调用。
+     */
+    public void onTimerEnd() {
+        if (mTimeSuscriber != null) {
+            mTimeSuscriber.unsubscribe();
+            mTimeSuscriber = null;
+        }
+        stopBGM();
+        stopForeground(true);
+    }
+
     private void playBGM() {
         if (mMediaPlayer != null) {
             mMediaPlayer.start();
@@ -135,7 +146,7 @@ public class PomodoroService extends Service {
             mTomatoTime = minutes * 60;
             mTimeSuscriber = new TimeSuscriber();
             Observable.interval(1, TimeUnit.SECONDS)
-                    .take(minutes * 60)
+                    .take(mTomatoTime)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(mTimeSuscriber);
 
@@ -153,13 +164,7 @@ public class PomodoroService extends Service {
          * 停止当前的计时器。如果当前没有运行中的计时器，则不做反应。
          */
         public void stopTomato() {
-            if (mTimeSuscriber != null) {
-                mTimeSuscriber.unsubscribe();
-                mTimeSuscriber = null;
-            }
-
-            stopBGM();
-            stopForeground(true);
+            onTimerEnd();
         }
 
         /**
@@ -168,7 +173,6 @@ public class PomodoroService extends Service {
          *
          * 为了防止没有释放，listener 在内部会以弱引用的方式保存，listener 的持有者必须自己保证在 unregister
          * 之前，对象都是存活的。
-         * @param listener
          */
         public void registerTimeChangeListener(@NonNull TomatoStateListener listener) {
             // 补发一个番茄钟已经开始的消息。
@@ -203,20 +207,19 @@ public class PomodoroService extends Service {
     }
 
     private class TimeSuscriber extends Subscriber<Long> {
-
         @Override
         public void onCompleted() {
+            onTimerEnd();
+
             for (WeakReference<TomatoStateListener> listenerRef : mListeners) {
                 if (listenerRef.get() != null) {
                     listenerRef.get().onTomatoFinish();
                 }
             }
-            if (mTimeSuscriber != null) {
-                mTimeSuscriber.unsubscribe();
-                mTimeSuscriber = null;
-            }
 
-            stopBGM();
+            long endTime = System.currentTimeMillis();
+            long startTime = endTime - mTomatoTime * 1000;
+            ModelFactory.getInstance().newTomato(startTime, endTime);
         }
 
         @Override

@@ -17,10 +17,11 @@
 
 apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    buildToolsVersion "24.0.3"
     defaultConfig {
         applicationId "guaidaodl.github.io.pomodorotimer"
         minSdkVersion 21
@@ -38,11 +39,10 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
     // common
     compile 'com.android.support:appcompat-v7:24.2.1'
@@ -52,14 +52,14 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
     compile 'io.reactivex:rxjava:1.2.0'
     compile 'io.reactivex:rxandroid:1.2.1'
-
     // debug
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
-
     // release
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
-
     // test
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
     testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.2.0-beta.1'
+    // Android Test
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
 }

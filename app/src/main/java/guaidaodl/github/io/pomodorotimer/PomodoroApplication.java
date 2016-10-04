@@ -22,6 +22,8 @@ import android.app.Application;
 import com.squareup.leakcanary.LeakCanary;
 
 import guaidaodl.github.io.pomodorotimer.service.PomodoroService;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 public class PomodoroApplication extends Application {
     @Override
@@ -31,7 +33,25 @@ public class PomodoroApplication extends Application {
             return;
         }
 
+        // Debug tools
         LeakCanary.install(this);
+
+        // Database
+        setUpRealm();
+
         PomodoroService.start(this);
+    }
+
+    private void setUpRealm() {
+        Realm.init(this);
+        RealmConfiguration configuration = new RealmConfiguration.Builder()
+                .name("Pomodoro.realm")
+                .schemaVersion(1)
+                .build();
+
+        Realm.setDefaultConfiguration(configuration);
+
+        // In first launch, getDefaultInstance will create a realm file
+        Realm.getDefaultInstance();
     }
 }
