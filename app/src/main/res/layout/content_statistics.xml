@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2016.  Guaidaodl
+  ~  Copyright (c) 2016.  Guaidaodl
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -13,15 +14,16 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   ~
+  ~
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:context="io.github.guaidaodl.pomodorotimer.ui.main.MainActivity">
-    <item
-        android:id="@+id/action_statistics"
-        android:icon="@drawable/ic_action_statistic"
-        android:title="@string/action_statistic"
-        app:showAsAction="always"/>
-</menu>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/statistic.fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/activity_statistics">
+</FrameLayout>

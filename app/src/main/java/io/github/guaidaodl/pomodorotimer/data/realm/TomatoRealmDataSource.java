@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016.  Guaidaodl
+ *  Copyright (c) 2016.  Guaidaodl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
+ *
  */
 
-package io.github.guaidaodl.pomodorotimer.model.factory;
+package io.github.guaidaodl.pomodorotimer.data.realm;
 
 import android.support.annotation.VisibleForTesting;
 
-import io.github.guaidaodl.pomodorotimer.model.realm.Tomato;
+import java.util.List;
+
+import io.github.guaidaodl.pomodorotimer.data.TomatoDataSource;
 import io.realm.Realm;
+import io.realm.RealmResults;
+import rx.Observable;
+import rx.functions.Func1;
 
-public class ModelFactory {
-    private static final ModelFactory INSTANCE = new ModelFactory();
+public class TomatoRealmDataSource implements TomatoDataSource {
+    private static final TomatoRealmDataSource INSTANCE = new TomatoRealmDataSource();
 
-    public static ModelFactory getInstance() {
+    public static TomatoRealmDataSource getInstance() {
         return INSTANCE;
     }
 
-    private Realm mRealm = Realm.getDefaultInstance();
-    private ModelFactory() {
+    private TomatoRealmDataSource(){
     }
-
 
     /**
      * 创建一个番茄。指定 startTime 和 endTime。
@@ -42,10 +46,12 @@ public class ModelFactory {
      *
      * @return 创建的 Tomato
      */
+    @Override
     public Tomato newTomato(long startTime, long endTime) {
+        Realm realm = Realm.getDefaultInstance();
         if (startTime <= 0) {
             throw new IllegalArgumentException("start time must bigger than zero, startTime = "
-                                                +  startTime);
+                    +  startTime);
         }
 
         if (startTime > endTime) {
@@ -53,20 +59,26 @@ public class ModelFactory {
                     "actual startTime = " + startTime + " endTime = " + endTime);
         }
 
-        mRealm.beginTransaction();
-        Tomato tomato = mRealm.createObject(Tomato.class);
+        realm.beginTransaction();
+        Tomato tomato = realm.createObject(Tomato.class);
         tomato.setStartTime(startTime);
         tomato.setEndTime(endTime);
         tomato.setBreakCount(0);
 
-        mRealm.commitTransaction();
+        realm.commitTransaction();
         return tomato;
     }
 
-    @VisibleForTesting
-    public void closeRealm() {
-        if (mRealm != null) {
-            mRealm.close();
-        }
+    @Override
+    public Observable<? extends List<Tomato>> getAllTomatos() {
+        Realm realm = Realm.getDefaultInstance();
+        return realm.where(Tomato.class).findAllAsync().asObservable();
+    }
+
+    @Override
+    public Observable<Integer> getTomatosCount() {
+        Realm realm = Realm.getDefaultInstance();
+
+        return Observable.just(realm.where(Tomato.class).findAll().size());
     }
 }

@@ -16,25 +16,18 @@
  *
  */
 
-package io.github.guaidaodl.pomodorotimer.model.factory;
-
-import android.support.test.runner.AndroidJUnit4;
+package io.github.guaidaodl.pomodorotimer.data.realm;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import io.github.guaidaodl.pomodorotimer.model.RealmBaseTest;
-import io.github.guaidaodl.pomodorotimer.model.realm.Tomato;
 import io.realm.RealmResults;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
-@RunWith(AndroidJUnit4.class)
-public class ModelFactoryTest extends RealmBaseTest {
+public class TomatoRealmDataSourceTest extends RealmBaseTest {
     @Before
     @Override
     public void setUp() {
@@ -58,7 +51,7 @@ public class ModelFactoryTest extends RealmBaseTest {
         // create new one
         long endTime = System.currentTimeMillis();
         long startTime = endTime - 25L * 60L * 1000L;
-        ModelFactory.getInstance().newTomato(startTime, endTime);
+        TomatoRealmDataSource.getInstance().newTomato(startTime, endTime);
 
         allTomato = mRealm.where(Tomato.class).findAll();
         assertThat("After create a new tomato, there is one tomato", allTomato.size(), equalTo(1));
@@ -69,13 +62,13 @@ public class ModelFactoryTest extends RealmBaseTest {
 
         // error
         try {
-            ModelFactory.getInstance().newTomato(0, -1);
+            TomatoRealmDataSource.getInstance().newTomato(0, -1);
             fail();
         } catch (IllegalArgumentException ignore) {
         }
 
         try {
-            ModelFactory.getInstance().newTomato(1, 0);
+            TomatoRealmDataSource.getInstance().newTomato(1, 0);
             fail();
         } catch (IllegalArgumentException ignore) {
         }

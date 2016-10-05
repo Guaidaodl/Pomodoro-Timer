@@ -36,6 +36,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.guaidaodl.pomodorotimer.R;
 import io.github.guaidaodl.pomodorotimer.service.PomodoroService;
+import io.github.guaidaodl.pomodorotimer.ui.statistics.StatisticsAcvitity;
 import io.github.guaidaodl.pomodorotimer.ui.timer.TimerFragment;
 
 public class MainActivity extends AppCompatActivity implements TimerFragment.TimerFragmentDelegate {
@@ -97,9 +98,11 @@ public class MainActivity extends AppCompatActivity implements TimerFragment.Tim
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_statistics: {
+                StatisticsAcvitity.startActivity(this);
+                break;
+            }
         }
 
         return super.onOptionsItemSelected(item);

@@ -34,8 +34,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import io.github.guaidaodl.pomodorotimer.Injection;
 import io.github.guaidaodl.pomodorotimer.R;
-import io.github.guaidaodl.pomodorotimer.model.factory.ModelFactory;
+import io.github.guaidaodl.pomodorotimer.data.TomatoRepository;
 import io.github.guaidaodl.pomodorotimer.ui.main.MainActivity;
 import rx.Observable;
 import rx.Subscriber;
@@ -133,6 +134,7 @@ public class PomodoroService extends Service {
             mMediaPlayer.pause();
         }
     }
+
     public class PomodoroBinder extends Binder {
         /**
          * 开始一个新的番茄定时器。如果已经有先有的定时器，则会先取消原来的定时器。
@@ -219,7 +221,8 @@ public class PomodoroService extends Service {
 
             long endTime = System.currentTimeMillis();
             long startTime = endTime - mTomatoTime * 1000;
-            ModelFactory.getInstance().newTomato(startTime, endTime);
+            TomatoRepository tomatoRepository = Injection.provideTaskRespository();
+            tomatoRepository.newTomato(startTime, endTime);
         }
 
         @Override

@@ -31,4 +31,7 @@
     <string name="main_timer_start">开始</string>
     <string name="main_timer_stop">中断</string>
     <string name="main_timer_default_time">25:00</string>
+
+    <!--Statistic-->
+    <string name="statistics_label">统计数据</string>
 </resources>

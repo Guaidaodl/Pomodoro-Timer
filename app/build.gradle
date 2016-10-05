@@ -41,6 +41,25 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    // If you need to add more flavors, consider using flavor dimensions.
+    productFlavors {
+        mock {
+            applicationIdSuffix = ".mock"
+        }
+        prod {
+
+        }
+    }
+
+    // Remove mockRelease as it's not needed.
+    android.variantFilter { variant ->
+        if (variant.buildType.name.equals('release')
+                && variant.getFlavors().get(0).name.equals('mock')) {
+            variant.setIgnore(true);
+        }
+    }
+
+
 }
 
 dependencies {
@@ -48,8 +67,11 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    apt 'com.jakewharton:butterknife-compiler:8.4.0'
     // common
+    // debug
+    // release
+    // test
+    // Android Test
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'
     compile 'com.jakewharton:butterknife:8.4.0'
@@ -57,14 +79,12 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
     compile 'io.reactivex:rxjava:1.2.0'
     compile 'io.reactivex:rxandroid:1.2.1'
-    // debug
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
-    // release
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
-    // test
+    compile 'com.google.guava:guava:19.0'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.2.0-beta.1'
-    // Android Test
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
 }

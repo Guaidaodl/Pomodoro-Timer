@@ -14,11 +14,12 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   ~
-  -->
-
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="io.github.guaidaodl.pomodorotimer">
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
     <application
         android:name=".PomodoroApplication"
         android:allowBackup="true"
@@ -37,6 +38,13 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.statistics.StatisticsAcvitity"
+            android:label="@string/statistics_label"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
         <service android:name=".service.PomodoroService"/>
     </application>
 

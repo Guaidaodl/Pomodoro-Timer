@@ -1,0 +1,26 @@
+<!--
+  ~  Copyright (c) 2016.  Guaidaodl
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  ~
+  -->
+
+<vector android:height="24dp" android:viewportHeight="96.0"
+    android:viewportWidth="96.0" android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#FFFFFF" android:pathData="M21.76,10.84C29.17,9.64 36.66,9.07 44.08,7.92C42.94,15.34 42.35,22.83 41.17,30.24C38.89,28.1 36.74,25.84 34.51,23.66C28.04,29.87 22.04,36.52 15.61,42.77C13.76,40.88 11.88,39.01 10,37.14C16.4,30.88 22.55,24.37 28.85,18.01C26.51,15.59 24.07,13.28 21.76,10.84Z"/>
+    <path android:fillColor="#FFFFFF" android:pathData="M72,24C77.33,24 82.67,24 88,24C88,45.33 88,66.67 88,88C82.67,88 77.33,88 72,88C72,66.67 72,45.33 72,24Z"/>
+    <path android:fillColor="#FFFFFF" android:pathData="M52,40C57.33,39.99 62.67,40 68,40C68,56 68,72 68,88C62.67,88 57.33,88 52,88C52,72 52,56 52,40Z"/>
+    <path android:fillColor="#FFFFFF" android:pathData="M32,56C37.33,56 42.67,56 48,56C48,66.67 48,77.33 48,88C42.67,88 37.33,88 32,88C32,77.33 32,66.67 32,56Z"/>
+    <path android:fillColor="#FFFFFF" android:pathData="M12,72C17.33,72 22.67,72 28,72C28,77.33 28,82.67 28,88C22.67,88 17.33,88 12,88C12,82.67 12,77.33 12,72Z"/>
+</vector>

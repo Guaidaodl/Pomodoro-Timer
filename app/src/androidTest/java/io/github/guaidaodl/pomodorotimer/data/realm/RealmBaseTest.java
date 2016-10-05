@@ -16,11 +16,10 @@
  *
  */
 
-package io.github.guaidaodl.pomodorotimer.model;
+package io.github.guaidaodl.pomodorotimer.data.realm;
 
 import org.junit.AfterClass;
 
-import io.github.guaidaodl.pomodorotimer.model.factory.ModelFactory;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -50,7 +49,6 @@ public class RealmBaseTest {
 
     @AfterClass
     public static void afterClass() {
-        ModelFactory.getInstance().closeRealm();
         Realm.deleteRealm(sTestConfig);
     }
 }

@@ -25,8 +25,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import guaidaodl.github.io.pomodorotimer.R;
 import io.github.guaidaodl.espresso.CustomViewMatchers;
+import io.github.guaidaodl.pomodorotimer.R;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;

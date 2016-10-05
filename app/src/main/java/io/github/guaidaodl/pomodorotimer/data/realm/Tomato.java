@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016.  Guaidaodl
+ *  Copyright (c) 2016.  Guaidaodl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
+ *
  */
 
-package io.github.guaidaodl.pomodorotimer.model.realm;
+package io.github.guaidaodl.pomodorotimer.data.realm;
 
 import io.realm.RealmObject;
 import io.realm.annotations.Index;
