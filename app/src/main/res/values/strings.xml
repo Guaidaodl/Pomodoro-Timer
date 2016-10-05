@@ -17,7 +17,9 @@
 
 <resources>
     <string name="app_name">PomodoroTimer</string>
-    <string name="action_settings">Settings</string>
+    <!--Main Menu-->
+    <string name="action_statistic">统计数据</string>
+    <string name="action_settings">设置</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
