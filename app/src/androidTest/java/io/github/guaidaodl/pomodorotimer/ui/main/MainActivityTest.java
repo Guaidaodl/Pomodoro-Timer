@@ -31,6 +31,8 @@ import io.github.guaidaodl.pomodorotimer.R;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE;
+import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static io.github.guaidaodl.espresso.CustomViewMatchers.withTextColor;
@@ -62,6 +64,15 @@ public class MainActivityTest {
                 .check(matches(withTextColor(R.color.primaryTextColor)));
         onView(withId(R.id.main_pager))
                 .check(matches(CustomViewMatchers.withItem(0)));
+    }
+
+    @Test
+    public void testOpenStatisticActivity() throws Exception {
+        onView(withId(R.id.action_statistics))
+                .perform(click());
+
+        onView(withText(R.string.statistics_label))
+                .check(matches(withEffectiveVisibility(VISIBLE)));
 
     }
 }

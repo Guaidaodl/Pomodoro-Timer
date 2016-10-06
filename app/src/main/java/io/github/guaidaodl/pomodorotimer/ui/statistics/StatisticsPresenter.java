@@ -20,29 +20,21 @@ package io.github.guaidaodl.pomodorotimer.ui.statistics;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
-import android.util.Log;
-
-import com.google.common.base.Preconditions;
+import android.support.v4.util.Pair;
 
 import java.util.List;
 
 import io.github.guaidaodl.pomodorotimer.data.TomatoRepository;
 import io.github.guaidaodl.pomodorotimer.data.realm.Tomato;
+import io.github.guaidaodl.pomodorotimer.utils.DateUtils;
 import io.github.guaidaodl.pomodorotimer.utils.shedulers.BaseSchedulerProvider;
-import rx.Observable;
-import rx.Subscriber;
 import rx.Subscription;
-import rx.functions.Action0;
 import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.subscriptions.CompositeSubscription;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * Created by Guaidaodl on 05/10/2016.
- */
-public class StatisticsPresenter implements StatisticsContract.Presenter {
+class StatisticsPresenter implements StatisticsContract.Presenter {
     @NonNull
     private final TomatoRepository mTomatoRepository;
     @NonNull
@@ -52,7 +44,7 @@ public class StatisticsPresenter implements StatisticsContract.Presenter {
 
     private CompositeSubscription mSubscriptions;
 
-    public StatisticsPresenter(@NonNull TomatoRepository tomatoRepository,
+    StatisticsPresenter(@NonNull TomatoRepository tomatoRepository,
                                @NonNull BaseSchedulerProvider schedulerProvider,
                                @NonNull StatisticsContract.View statisticsView) {
         mTomatoRepository  = checkNotNull(tomatoRepository, "tomatoRespository can not be null");
@@ -75,14 +67,42 @@ public class StatisticsPresenter implements StatisticsContract.Presenter {
         mSubscriptions.unsubscribe();
     }
 
-    public void loadStatistics() {
-        Subscription subscription = mTomatoRepository.getAllTomatos()
+    private void loadStatistics() {
+        Pair<Long, Long> todayTimePair = DateUtils.getTodayTime();
+        Subscription daySubscription =
+                mTomatoRepository.getTomatoWithStartTimeBetween(todayTimePair.first, todayTimePair.second)
+                .observeOn(mSchedulerProvider.ui())
                 .subscribe(new Action1<List<Tomato>>() {
                     @Override
                     public void call(List<Tomato> tomatos) {
-                        mStatisticsView.showStatistics(tomatos.size());
+                        mStatisticsView.showTodayTomatoCount(tomatos.size());
                     }
                 });
-        mSubscriptions.add(subscription);
+        mSubscriptions.add(daySubscription);
+
+
+        Pair<Long, Long> weekTime = DateUtils.getWeekTime();
+        Subscription weekSubscription =
+                mTomatoRepository.getTomatoWithStartTimeBetween(weekTime.first, weekTime.second)
+                        .observeOn(mSchedulerProvider.ui())
+                        .subscribe(new Action1<List<Tomato>>() {
+                            @Override
+                            public void call(List<Tomato> tomatos) {
+                                mStatisticsView.showWeekTomatoCount(tomatos.size());
+                            }
+                        });
+        mSubscriptions.add(weekSubscription);
+
+        Pair<Long, Long> monthTime = DateUtils.getMonthTime();
+        Subscription monthSubscription =
+                mTomatoRepository.getTomatoWithStartTimeBetween(monthTime.first, monthTime.second)
+                        .observeOn(mSchedulerProvider.ui())
+                        .subscribe(new Action1<List<Tomato>>() {
+                            @Override
+                            public void call(List<Tomato> tomatos) {
+                                mStatisticsView.showMonthTomatoCount(tomatos.size());
+                            }
+                        });
+        mSubscriptions.add(monthSubscription);
     }
 }

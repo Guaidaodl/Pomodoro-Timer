@@ -34,14 +34,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class StatisticsFragment extends Fragment implements StatisticsContract.View {
 
-    @BindView(R.id.statistic_tomato_count)
-    TextView mTomatoCountTextView;
+    @BindView(R.id.statistic_day_count)
+    TextView mDayCountTextView;
+
+    @BindView(R.id.statistic_week_count)
+    TextView mWeekCountTextView;
+
+    @BindView(R.id.statistic_month_count)
+    TextView mMonthCountTextView;
 
     private StatisticsContract.Presenter mPresenter;
 
     public static StatisticsFragment newInstance() {
-        StatisticsFragment fragment = new StatisticsFragment();
-        return fragment;
+        return new StatisticsFragment();
     }
 
     public StatisticsFragment() {
@@ -77,8 +82,18 @@ public class StatisticsFragment extends Fragment implements StatisticsContract.V
     }
 
     @Override
-    public void showStatistics(int tomatoCount) {
-        mTomatoCountTextView.setText("" + tomatoCount);
+    public void showTodayTomatoCount(int tomatoCount) {
+        mDayCountTextView.setText(String.valueOf(tomatoCount));
+    }
+
+    @Override
+    public void showWeekTomatoCount(int count) {
+        mWeekCountTextView.setText(String.valueOf(count));
+    }
+
+    @Override
+    public void showMonthTomatoCount(int count) {
+        mMonthCountTextView.setText(String.valueOf(count));
     }
 
     @Override

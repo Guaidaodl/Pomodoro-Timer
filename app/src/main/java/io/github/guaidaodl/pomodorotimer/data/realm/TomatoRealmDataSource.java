@@ -18,6 +18,7 @@
 
 package io.github.guaidaodl.pomodorotimer.data.realm;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
 import java.util.List;
@@ -46,6 +47,7 @@ public class TomatoRealmDataSource implements TomatoDataSource {
      *
      * @return 创建的 Tomato
      */
+    @NonNull
     @Override
     public Tomato newTomato(long startTime, long endTime) {
         Realm realm = Realm.getDefaultInstance();
@@ -72,7 +74,29 @@ public class TomatoRealmDataSource implements TomatoDataSource {
     @Override
     public Observable<? extends List<Tomato>> getAllTomatos() {
         Realm realm = Realm.getDefaultInstance();
-        return realm.where(Tomato.class).findAllAsync().asObservable();
+        return realm.where(Tomato.class).findAllAsync().asObservable()
+                .filter(new Func1<RealmResults<Tomato>, Boolean>() {
+                    @Override
+                    public Boolean call(RealmResults<Tomato> tomatos) {
+                        return tomatos.isLoaded();
+                    }
+                });
+    }
+
+    @Override
+    public Observable<? extends List<Tomato>> getTomatoWithStartTimeBetween(long startTime, long endTime) {
+        Realm realm = Realm.getDefaultInstance();
+        return realm.where(Tomato.class)
+                .greaterThanOrEqualTo("mStartTime", startTime)
+                .lessThanOrEqualTo("mStartTime", endTime)
+                .findAllAsync()
+                .asObservable()
+                .filter(new Func1<RealmResults<Tomato>, Boolean>() {
+                    @Override
+                    public Boolean call(RealmResults<Tomato> tomatos) {
+                        return tomatos.isLoaded();
+                    }
+                });
     }
 
     @Override

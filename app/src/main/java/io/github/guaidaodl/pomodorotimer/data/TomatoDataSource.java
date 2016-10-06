@@ -39,5 +39,7 @@ public interface TomatoDataSource {
 
     Observable<? extends List<Tomato>> getAllTomatos();
 
+    Observable<? extends List<Tomato>> getTomatoWithStartTimeBetween(long startTime, long endTime);
+
     Observable<Integer> getTomatosCount();
 }

@@ -21,9 +21,11 @@ package io.github.guaidaodl.pomodorotimer.ui.statistics;
 import io.github.guaidaodl.pomodorotimer.base.BasePresenter;
 import io.github.guaidaodl.pomodorotimer.base.BaseView;
 
-public class StatisticsContract {
+class StatisticsContract {
     interface View extends BaseView<Presenter> {
-        void showStatistics(int tomatoCount);
+        void showTodayTomatoCount(int Count);
+        void showWeekTomatoCount(int count);
+        void showMonthTomatoCount(int count);
         boolean isActive();
     }
 

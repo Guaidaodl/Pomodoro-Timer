@@ -20,8 +20,6 @@ package io.github.guaidaodl.pomodorotimer.data;
 
 import android.support.annotation.NonNull;
 
-import com.google.common.base.Preconditions;
-
 import java.util.List;
 
 import io.github.guaidaodl.pomodorotimer.data.realm.Tomato;
@@ -55,6 +53,11 @@ public class TomatoRepository implements TomatoDataSource {
     @Override
     public Observable<? extends List<Tomato>> getAllTomatos() {
         return mLocalDataSource.getAllTomatos();
+    }
+
+    @Override
+    public Observable<? extends List<Tomato>> getTomatoWithStartTimeBetween(long t1, long t2) {
+        return mLocalDataSource.getTomatoWithStartTimeBetween(t1, t2);
     }
 
     @Override
