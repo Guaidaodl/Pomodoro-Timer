@@ -81,7 +81,7 @@ class StatisticsPresenter implements StatisticsContract.Presenter {
         mSubscriptions.add(daySubscription);
 
 
-        Pair<Long, Long> weekTime = DateUtils.getWeekTime();
+        Pair<Long, Long> weekTime = DateUtils.getCurrentWeekTime();
         Subscription weekSubscription =
                 mTomatoRepository.getTomatoWithStartTimeBetween(weekTime.first, weekTime.second)
                         .observeOn(mSchedulerProvider.ui())
@@ -93,7 +93,7 @@ class StatisticsPresenter implements StatisticsContract.Presenter {
                         });
         mSubscriptions.add(weekSubscription);
 
-        Pair<Long, Long> monthTime = DateUtils.getMonthTime();
+        Pair<Long, Long> monthTime = DateUtils.getCurrentMonthTime();
         Subscription monthSubscription =
                 mTomatoRepository.getTomatoWithStartTimeBetween(monthTime.first, monthTime.second)
                         .observeOn(mSchedulerProvider.ui())

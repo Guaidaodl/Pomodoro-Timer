@@ -18,6 +18,7 @@
 
 package io.github.guaidaodl.pomodorotimer.utils;
 
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.util.Pair;
 
 import java.util.Calendar;
@@ -27,16 +28,21 @@ public class DateUtils {
     private DateUtils(){}
 
     public static Pair<Long, Long> getTodayTime() {
-        GregorianCalendar calendar = getTodayStartCalendar();
+        Calendar calendar = getTodayStartCalendar();
 
         long startMilliSecondOfToday = calendar.getTimeInMillis();
         long endMilliSecondOfToday = startMilliSecondOfToday + 24L * 60L * 60L * 1000L;
         return Pair.create(startMilliSecondOfToday, endMilliSecondOfToday);
     }
 
-    public static Pair<Long, Long> getWeekTime() {
-        GregorianCalendar calendar = getTodayStartCalendar();
-        calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
+    public static Pair<Long, Long> getCurrentWeekTime() {
+        return getWeekTime(getTodayStartCalendar());
+    }
+
+    @VisibleForTesting
+    static Pair<Long, Long> getWeekTime(Calendar calendar) {
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        calendar.add(Calendar.DAY_OF_MONTH, -dayOfWeek + 1);
 
         long startMilliSecondOfToday = calendar.getTimeInMillis();
         long endMilliSecondOfToday = startMilliSecondOfToday + 7L * 24L * 60L * 60L * 1000L;
@@ -44,19 +50,23 @@ public class DateUtils {
         return Pair.create(startMilliSecondOfToday, endMilliSecondOfToday);
     }
 
-    public static Pair<Long, Long> getMonthTime() {
-        GregorianCalendar calendar = getTodayStartCalendar();
+    public static Pair<Long, Long> getCurrentMonthTime() {
+        return getMonthTime(getTodayStartCalendar());
+    }
+
+    @VisibleForTesting
+    static Pair<Long, Long> getMonthTime(Calendar calendar) {
         calendar.set(Calendar.DAY_OF_MONTH, 1);
 
-        int dayCount = calendar.getMaximum(Calendar.DAY_OF_MONTH);
+        int dayCount = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
         long startMilliSecondOfToday = calendar.getTimeInMillis();
-        long endMilliSecondOfToday = startMilliSecondOfToday + dayCount * 7L * 24L * 60L * 60L * 1000L;
+        long endMilliSecondOfToday = startMilliSecondOfToday + dayCount * 24L * 60L * 60L * 1000L;
 
         return Pair.create(startMilliSecondOfToday, endMilliSecondOfToday);
     }
 
-    private static GregorianCalendar getTodayStartCalendar() {
-        GregorianCalendar temp = new GregorianCalendar();
+    private static Calendar getTodayStartCalendar() {
+        Calendar temp = new GregorianCalendar();
         return new GregorianCalendar(temp.get(Calendar.YEAR), temp.get(Calendar.MONTH),
                 temp.get(Calendar.DAY_OF_MONTH));
     }
