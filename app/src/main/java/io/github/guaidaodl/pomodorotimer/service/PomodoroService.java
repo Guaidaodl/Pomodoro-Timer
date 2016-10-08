@@ -17,8 +17,6 @@
 
 package io.github.guaidaodl.pomodorotimer.service;
 
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -34,16 +32,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import io.github.guaidaodl.pomodorotimer.BuildConfig;
 import io.github.guaidaodl.pomodorotimer.Injection;
 import io.github.guaidaodl.pomodorotimer.R;
 import io.github.guaidaodl.pomodorotimer.data.TomatoRepository;
-import io.github.guaidaodl.pomodorotimer.ui.main.MainActivity;
+import io.github.guaidaodl.pomodorotimer.utils.NotificationHelper;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 
 public class PomodoroService extends Service {
-    private static final int NOTIFICATION_ID = 1;
+    @SuppressWarnings("PointlessBooleanExpression")
+    private static final boolean QUICK_TEST = true && BuildConfig.DEBUG;
     private List<WeakReference<TomatoStateListener>> mListeners = new LinkedList<>();
 
     /** 当前番茄的总时长，单位是秒 */
@@ -78,20 +78,6 @@ public class PomodoroService extends Service {
         super.onCreate();
         mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.tick);
         mMediaPlayer.setLooping(true);
-    }
-
-    private void startForeground() {
-        Notification.Builder notificationBuilder = new Notification.Builder(getApplicationContext());
-        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
-                        new Intent(getApplicationContext(), MainActivity.class),
-                        PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Notification notification = notificationBuilder.setSmallIcon(R.drawable.ic_nofication)
-                                                       .setTicker("Test Notification")
-                                                       .setContentIntent(pi)
-                                                       .build();
-
-        startForeground(NOTIFICATION_ID, notification);
     }
 
     @Nullable
@@ -145,7 +131,11 @@ public class PomodoroService extends Service {
             if (mTimeSuscriber != null) {
                 mTimeSuscriber.unsubscribe();
             }
-            mTomatoTime = minutes * 60;
+            if (QUICK_TEST) {
+                mTomatoTime = 5;
+            } else {
+                mTomatoTime = minutes * 60;
+            }
             mTimeSuscriber = new TimeSuscriber();
             Observable.interval(1, TimeUnit.SECONDS)
                     .take(mTomatoTime)
@@ -159,7 +149,8 @@ public class PomodoroService extends Service {
             }
 
             playBGM();
-            startForeground();
+            NotificationHelper.cancelBreakNotification(getApplicationContext());
+            NotificationHelper.startPomodoroTimerForeground(PomodoroService.this);
         }
 
         /**
@@ -213,16 +204,20 @@ public class PomodoroService extends Service {
         public void onCompleted() {
             onTimerEnd();
 
+            // notify listeners
             for (WeakReference<TomatoStateListener> listenerRef : mListeners) {
                 if (listenerRef.get() != null) {
                     listenerRef.get().onTomatoFinish();
                 }
             }
-
+            // save data
             long endTime = System.currentTimeMillis();
             long startTime = endTime - mTomatoTime * 1000;
             TomatoRepository tomatoRepository = Injection.provideTaskRespository();
             tomatoRepository.newTomato(startTime, endTime);
+
+            // notify user
+            NotificationHelper.showBreakNotification(getApplicationContext());
         }
 
         @Override

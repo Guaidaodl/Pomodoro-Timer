@@ -16,18 +16,19 @@
   -->
 
 <resources>
-    <string name="app_name">PomodoroTimer</string>
+    <string name="app_name">番茄时钟</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--Main Activity-->
+    <string name="main_tab_timer">计时器</string>
+    <string name="main_tab_todo_today">今日待办</string>
+    <string name="main_tab_action_list">活动清单</string>
     <!--Main Menu-->
     <string name="action_statistic">统计数据</string>
     <string name="action_settings">设置</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-    <string name="main_tab_timer">计时器</string>
-    <string name="main_tab_todo_today">今日待办</string>
-    <string name="main_tab_action_list">活动清单</string>
-
-    <!-- Timer -->
+    <!-- Timer Tab-->
     <string name="main_timer_start">开始</string>
     <string name="main_timer_stop">中断</string>
     <string name="main_timer_default_time">25:00</string>
@@ -37,4 +38,8 @@
     <string name="statistics_today">今天</string>
     <string name="statistics_week">本周</string>
     <string name="statistics_month">本月</string>
+
+    <!--Notification-->
+    <string name="notification_tomato_end_content_title">完成一个番茄</string>
+    <string name="notification_tomato_end_content_text">休息一下吧</string>
 </resources>
