@@ -18,14 +18,25 @@
 
 package io.github.guaidaodl.pomodorotimer.ui.statistics;
 
+import android.support.annotation.NonNull;
+
+import com.google.common.collect.ImmutableListMultimap;
+
 import io.github.guaidaodl.pomodorotimer.base.BasePresenter;
 import io.github.guaidaodl.pomodorotimer.base.BaseView;
+import io.github.guaidaodl.pomodorotimer.data.realm.Tomato;
 
 class StatisticsContract {
     interface View extends BaseView<Presenter> {
         void showTodayTomatoCount(int Count);
         void showWeekTomatoCount(int count);
         void showMonthTomatoCount(int count);
+
+        /**
+         * show the statistics in last seven days.
+         */
+        void showLastSevenDaysTomatoStatistics(@NonNull ImmutableListMultimap<Long, Tomato> statistic);
+
         boolean isActive();
     }
 

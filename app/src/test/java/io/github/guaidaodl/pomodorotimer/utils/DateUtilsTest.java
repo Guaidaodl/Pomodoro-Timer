@@ -59,50 +59,52 @@ public class DateUtilsTest {
     public void testGetWeekTime() throws Exception {
         Calendar c = new GregorianCalendar(2016, Calendar.JANUARY, 1);
         Pair<Long, Long> testWeekTime = DateUtils.getWeekTime(c);
-
-        long expectedStartTime = new GregorianCalendar(2015, Calendar.DECEMBER, 27).getTimeInMillis();
-        long expectedEndTime = new GregorianCalendar(2016, Calendar.JANUARY, 3).getTimeInMillis();
-
-        Assert.assertThat("The start time should be 2016-9-25 0:00:00, but actual is " + formatDate(testWeekTime.first),
-                            testWeekTime.first, equalTo(expectedStartTime));
-        Assert.assertThat("The end time should be 2016-10-2 0:00:00 but actual is " + formatDate(testWeekTime.second),
-                            testWeekTime.second, equalTo(expectedEndTime));
+        assertTime(testWeekTime,
+                2015, Calendar.DECEMBER, 27,
+                2016, Calendar.JANUARY, 3);
     }
 
     @Test
     public void testGetMonthTime() throws Exception {
         Calendar c = new GregorianCalendar(2012, Calendar.FEBRUARY, 23);
         Pair<Long, Long> monthTime = DateUtils.getMonthTime(c);
-
-        long expectedStartTime = new GregorianCalendar(2012, Calendar.FEBRUARY, 1).getTimeInMillis();
-        long expectedEndTime = new GregorianCalendar(2012, Calendar.MARCH, 1).getTimeInMillis();
-
-        Assert.assertThat("The start time should be 2012-2-1 0:00:00, but actual is " + formatDate(monthTime.first),
-                monthTime.first, equalTo(expectedStartTime));
-        Assert.assertThat("The end time should be 2012-3-1 0:00:00, but actual is " + formatDate(monthTime.second),
-                monthTime.second, equalTo(expectedEndTime));
+        assertTime(monthTime,
+                2012, Calendar.FEBRUARY, 1,
+                2012, Calendar.MARCH, 1);
 
         c = new GregorianCalendar(2014, Calendar.FEBRUARY, 23);
         monthTime = DateUtils.getMonthTime(c);
-
-        expectedStartTime = new GregorianCalendar(2014, Calendar.FEBRUARY, 1).getTimeInMillis();
-        expectedEndTime = new GregorianCalendar(2014, Calendar.MARCH, 1).getTimeInMillis();
-
-        Assert.assertThat("The start time should be 2014-2-1 0:00:00, but actual is " + formatDate(monthTime.first),
-                monthTime.first, equalTo(expectedStartTime));
-        Assert.assertThat("The end time should be 2014-3-1 0:00:00, but actual is " + formatDate(monthTime.second),
-                monthTime.second, equalTo(expectedEndTime));
+        assertTime(monthTime,
+                2014, Calendar.FEBRUARY, 1,
+                2014, Calendar.MARCH, 1);
 
         c = new GregorianCalendar(2016, Calendar.OCTOBER, 2);
         monthTime = DateUtils.getMonthTime(c);
+        assertTime(monthTime,
+                    2016, Calendar.OCTOBER, 1,
+                    2016, Calendar.NOVEMBER, 1);
+    }
 
-        expectedStartTime = new GregorianCalendar(2016, Calendar.OCTOBER, 1).getTimeInMillis();
-        expectedEndTime = new GregorianCalendar(2016, Calendar.NOVEMBER, 1).getTimeInMillis();
+    @Test
+    public void testGetLastSevenDaysTime() {
+        GregorianCalendar c = new GregorianCalendar(2016, Calendar.OCTOBER, 7);
 
-        Assert.assertThat("The start time should be 2016-10-1 0:00:00, but actual is " + formatDate(monthTime.first),
-                monthTime.first, equalTo(expectedStartTime));
-        Assert.assertThat("The end time should be 2016-11-1 0:00:00, but actual is " + formatDate(monthTime.second),
-                monthTime.second, equalTo(expectedEndTime));
+        Pair<Long, Long> sevenDaysTimeBefore = DateUtils.getSevenDaysTimeBefore(c);
+        assertTime(sevenDaysTimeBefore,
+                    2016, Calendar.OCTOBER, 1,
+                    2016, Calendar.OCTOBER, 8);
+    }
+
+    private void assertTime(Pair<Long, Long> actualTimePair,
+                            int startYear, int startMonth, int startDay,
+                            int endYear, int endMonth, int endDay) {
+        long expectedStartTime = new GregorianCalendar(startYear, startMonth, startDay).getTimeInMillis();
+        long expectedEndTime = new GregorianCalendar(endYear, endMonth, endDay).getTimeInMillis();
+
+        Assert.assertThat("The start time should be " + formatDate(expectedEndTime) + " but actual is " + formatDate(actualTimePair.first),
+                actualTimePair.first, equalTo(expectedStartTime));
+        Assert.assertThat("The end time should be " + formatDate(expectedEndTime) + " but actual is " + formatDate(actualTimePair.second),
+                actualTimePair.second, equalTo(expectedEndTime));
     }
 
     private String formatDate(long t) {

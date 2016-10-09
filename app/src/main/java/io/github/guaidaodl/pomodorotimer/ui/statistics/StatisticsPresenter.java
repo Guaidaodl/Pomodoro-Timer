@@ -19,8 +19,13 @@
 package io.github.guaidaodl.pomodorotimer.ui.statistics;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.v4.util.Pair;
+
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.Multimaps;
 
 import java.util.List;
 
@@ -68,7 +73,7 @@ class StatisticsPresenter implements StatisticsContract.Presenter {
     }
 
     private void loadStatistics() {
-        Pair<Long, Long> todayTimePair = DateUtils.getTodayTime();
+        final Pair<Long, Long> todayTimePair = DateUtils.getTodayTime();
         Subscription daySubscription =
                 mTomatoRepository.getTomatoWithStartTimeBetween(todayTimePair.first, todayTimePair.second)
                 .observeOn(mSchedulerProvider.ui())
@@ -104,5 +109,25 @@ class StatisticsPresenter implements StatisticsContract.Presenter {
                             }
                         });
         mSubscriptions.add(monthSubscription);
+
+        final Pair<Long, Long> lastSevenDaysTime = DateUtils.getLastSeventDaysTime();
+        Subscription lastSevenDaySubscription =
+                mTomatoRepository.getTomatoWithStartTimeBetween(lastSevenDaysTime.first, lastSevenDaysTime.second)
+                    .subscribe(new Action1<List<Tomato>>() {
+                        @Override
+                        public void call(List<Tomato> tomatos) {
+                            ImmutableListMultimap<Long, Tomato> index =
+                                    Multimaps.index(tomatos, new Function<Tomato, Long>() {
+                                @Nullable
+                                @Override
+                                public Long apply(Tomato tomato) {
+                                    return DateUtils.getStartOfDay(tomato.getStartTime()).getTimeInMillis();
+                                }
+                            });
+
+                            mStatisticsView.showLastSevenDaysTomatoStatistics(index);
+                        }
+                    });
+        mSubscriptions.add(lastSevenDaySubscription);
     }
 }

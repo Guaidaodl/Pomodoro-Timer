@@ -39,6 +39,10 @@ public class DateUtils {
         return getWeekTime(getTodayStartCalendar());
     }
 
+    /**
+     * 获得指定日期的周的起始和结束时间. 默认一周的第一天是星期日.
+     * 这里默认 Calendar 中的时间是00:00:00;
+     */
     @VisibleForTesting
     static Pair<Long, Long> getWeekTime(Calendar calendar) {
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
@@ -54,6 +58,11 @@ public class DateUtils {
         return getMonthTime(getTodayStartCalendar());
     }
 
+    /**
+     * 获得指定日期的月份的起始和终止时间.
+     *
+     * Calendar 中的时间应该是 00:00:00
+     */
     @VisibleForTesting
     static Pair<Long, Long> getMonthTime(Calendar calendar) {
         calendar.set(Calendar.DAY_OF_MONTH, 1);
@@ -65,9 +74,35 @@ public class DateUtils {
         return Pair.create(startMilliSecondOfToday, endMilliSecondOfToday);
     }
 
+    public static Pair<Long, Long> getLastSeventDaysTime() {
+        return getSevenDaysTimeBefore(getTodayStartCalendar());
+    }
+
+    /**
+     * 获得指定 Calendar 时间七天内的起始和终止时间. 这里默认 Calendar 中的时间
+     * 是00:00:00;
+     */
+    @VisibleForTesting
+    static Pair<Long, Long> getSevenDaysTimeBefore(Calendar calendar) {
+        long endTime = calendar.getTimeInMillis() + 24L * 60 * 60 * 1000;
+        calendar.add(Calendar.DAY_OF_YEAR, -6);
+        long startTime = calendar.getTimeInMillis();
+
+        return Pair.create(startTime, endTime);
+    }
+
     private static Calendar getTodayStartCalendar() {
-        Calendar temp = new GregorianCalendar();
-        return new GregorianCalendar(temp.get(Calendar.YEAR), temp.get(Calendar.MONTH),
-                temp.get(Calendar.DAY_OF_MONTH));
+        return getStartOfDay(Calendar.getInstance());
+    }
+
+    public static Calendar getStartOfDay(long timeImMillis) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(timeImMillis);
+        return getStartOfDay(c);
+    }
+
+    private static Calendar getStartOfDay(Calendar c) {
+        return new GregorianCalendar(c.get(Calendar.YEAR), c.get(Calendar.MONTH),
+                c.get(Calendar.DAY_OF_MONTH));
     }
 }

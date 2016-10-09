@@ -19,13 +19,13 @@
 package io.github.guaidaodl.pomodorotimer.data.realm;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
 
 import java.util.List;
 
 import io.github.guaidaodl.pomodorotimer.data.TomatoDataSource;
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.Sort;
 import rx.Observable;
 import rx.functions.Func1;
 
@@ -89,7 +89,7 @@ public class TomatoRealmDataSource implements TomatoDataSource {
         return realm.where(Tomato.class)
                 .greaterThanOrEqualTo("mStartTime", startTime)
                 .lessThanOrEqualTo("mStartTime", endTime)
-                .findAllAsync()
+                .findAllSortedAsync("mStartTime", Sort.ASCENDING)
                 .asObservable()
                 .filter(new Func1<RealmResults<Tomato>, Boolean>() {
                     @Override

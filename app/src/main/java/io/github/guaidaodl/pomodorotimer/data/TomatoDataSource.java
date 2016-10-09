@@ -27,6 +27,9 @@ import rx.Observable;
 
 /**
  * Main entry to tomato data.
+ *
+ * Because of realm, you should not set observable schedular. All the query is
+ * async default.
  */
 public interface TomatoDataSource {
     /**
