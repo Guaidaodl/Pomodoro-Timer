@@ -27,7 +27,7 @@ android {
         applicationId "io.github.guaidaodl.pomodorotimer"
         minSdkVersion 21
         targetSdkVersion 24
-        versionCode 1000001001
+        versionCode 1000001002
         versionName "0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -37,7 +37,7 @@ android {
             testCoverageEnabled = true
         }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

@@ -31,5 +31,7 @@
     rx.internal.util.atomic.LinkedQueueNode consumerNode;
 }
 
--dontwarn javax.annotation.**
--dontwarn javax.inject.**
+# guava 19.0
+-dontwarn java.lang.ClassValue
+-dontwarn com.google.j2objc.annotations.Weak
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
