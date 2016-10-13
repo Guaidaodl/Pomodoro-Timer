@@ -94,7 +94,7 @@ public class TimerFragment extends Fragment implements PomodoroService.TomatoSta
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mDelegate.registerTomatoListner(this);
+        mDelegate.registerTomatoListener(this);
     }
 
     /**
@@ -138,7 +138,13 @@ public class TimerFragment extends Fragment implements PomodoroService.TomatoSta
     }
 
     @Override
-    public void onTomatoFinish() {
+    public void onTomatoStop() {
+        mTimerRunning = false;
+        resetViews();
+    }
+
+    @Override
+    public void onTomatoComplete() {
         mTimerRunning = false;
         resetViews();
     }
@@ -164,7 +170,7 @@ public class TimerFragment extends Fragment implements PomodoroService.TomatoSta
     public interface TimerFragmentDelegate {
         void startNewTomato();
         void stopTomato();
-        void registerTomatoListner(PomodoroService.TomatoStateListener listener);
+        void registerTomatoListener(PomodoroService.TomatoStateListener listener);
         void unregisterTomatoListener(PomodoroService.TomatoStateListener listener);
     }
 }

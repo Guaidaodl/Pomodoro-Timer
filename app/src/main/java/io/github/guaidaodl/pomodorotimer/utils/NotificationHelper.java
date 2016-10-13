@@ -47,9 +47,14 @@ public class NotificationHelper {
                 new Intent(context, MainActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
+        PendingIntent stopTimerIntent = PendingIntent.getService(context, 0,
+                PomodoroService.getIntentForStopTimer(context), PendingIntent.FLAG_UPDATE_CURRENT);
+
         return notificationBuilder.setSmallIcon(R.drawable.ic_nofication)
-                .setTicker("Test Notification")
+                .setContentTitle("Working")
+                .setContentText("Keep")
                 .setContentIntent(pi)
+                .addAction(new NotificationCompat.Action(R.drawable.ic_action_stop, "Stop", stopTimerIntent))
                 .build();
     }
 
@@ -73,11 +78,15 @@ public class NotificationHelper {
      */
     private static Notification buildNotificationForBreak(Context context) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        PendingIntent pi = PendingIntent.getActivity(context, 0,
+            new Intent(context, MainActivity.class),
+            PendingIntent.FLAG_UPDATE_CURRENT);
 
         return builder.setSmallIcon(R.drawable.ic_nofication)
                 .setContentTitle(context.getString(R.string.notification_tomato_end_content_title))
                 .setContentText(context.getString(R.string.notification_tomato_end_content_text))
                 .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
+                .setContentIntent(pi)
                 .build();
     }
 }

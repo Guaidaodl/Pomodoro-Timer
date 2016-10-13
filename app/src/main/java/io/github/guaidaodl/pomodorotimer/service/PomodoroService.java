@@ -44,6 +44,12 @@ import rx.android.schedulers.AndroidSchedulers;
 public class PomodoroService extends Service {
     @SuppressWarnings("PointlessBooleanExpression")
     private static final boolean QUICK_TEST = true && BuildConfig.DEBUG;
+
+    private static final String ACTION_START_TIMER = "io.github.guaidaodl.pomodorotimer.startTimer";
+    private static final String ACTION_STOP_TIMER = "io.github.guaidaodl.pomodorotimer.stopTimer";
+
+    private static final String EXTRAS_TOMATO_MINUTE = "TOMATO_MINUTE";
+
     private List<WeakReference<TomatoStateListener>> mListeners = new LinkedList<>();
 
     /** 当前番茄的总时长，单位是秒 */
@@ -53,7 +59,7 @@ public class PomodoroService extends Service {
 
     /** 定时器的订阅者 */
     @Nullable
-    private TimeSuscriber mTimeSuscriber;
+    private TimeSubscriber mTimeSuscriber;
 
     private PomodoroBinder mBinder = new PomodoroBinder();
 
@@ -61,6 +67,16 @@ public class PomodoroService extends Service {
         Intent intent = new Intent(context, PomodoroService.class);
 
         context.startService(intent);
+    }
+
+    public static Intent getIntentForStopTimer(Context context) {
+        return new Intent(context, PomodoroService.class)
+                .setAction(ACTION_STOP_TIMER);
+    }
+
+    public static Intent getIntentForStartTimer(Context context) {
+        return new Intent(context, PomodoroService.class)
+                .setAction(ACTION_START_TIMER);
     }
 
     public static void bind(@NonNull Context context, @NonNull ServiceConnection conn) {
@@ -78,6 +94,29 @@ public class PomodoroService extends Service {
         super.onCreate();
         mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.tick);
         mMediaPlayer.setLooping(true);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        super.onStartCommand(intent, flags, startId);
+        if (intent == null || intent.getAction() == null) {
+            return START_NOT_STICKY;
+        }
+
+        String action = intent.getAction();
+        switch (action) {
+            case ACTION_STOP_TIMER:
+                stopTomato();
+                break;
+            case ACTION_START_TIMER:
+                int minutes = intent.getIntExtra(EXTRAS_TOMATO_MINUTE, 25);
+                startNewTomato(minutes);
+                break;
+            default:
+                throw new IllegalStateException("unrecognized action :" + action);
+        }
+
+        return START_NOT_STICKY;
     }
 
     @Nullable
@@ -122,71 +161,82 @@ public class PomodoroService extends Service {
     }
 
     public class PomodoroBinder extends Binder {
-        /**
-         * 开始一个新的番茄定时器。如果已经有先有的定时器，则会先取消原来的定时器。
-         *
-         * @param minutes 番茄定时器的时间长度
-         */
-        public void startNewTomato(int minutes) {
-            if (mTimeSuscriber != null) {
-                mTimeSuscriber.unsubscribe();
-            }
-            if (QUICK_TEST) {
-                mTomatoTime = 5;
-            } else {
-                mTomatoTime = minutes * 60;
-            }
-            mTimeSuscriber = new TimeSuscriber();
-            Observable.interval(1, TimeUnit.SECONDS)
-                    .take(mTomatoTime)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(mTimeSuscriber);
+        public PomodoroService getService() {
+            return PomodoroService.this;
+        }
+    }
 
-            for (WeakReference<TomatoStateListener> listenerRef : mListeners) {
-                if (listenerRef.get() != null) {
-                    listenerRef.get().onTomatoStart();
-                }
-            }
+    /**
+     * 开始一个新的番茄定时器。如果已经有先有的定时器，则会先取消原来的定时器。
+     *
+     * @param minutes 番茄定时器的时间长度
+     */
+    public void startNewTomato(int minutes) {
+        if (mTimeSuscriber != null) {
+            mTimeSuscriber.unsubscribe();
+        }
+        if (QUICK_TEST) {
+            mTomatoTime = 5;
+        } else {
+            mTomatoTime = minutes * 60;
+        }
+        mTimeSuscriber = new TimeSubscriber();
+        Observable.interval(1, TimeUnit.SECONDS)
+            .take(mTomatoTime)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(mTimeSuscriber);
 
-            playBGM();
-            NotificationHelper.cancelBreakNotification(getApplicationContext());
-            NotificationHelper.startPomodoroTimerForeground(PomodoroService.this);
+        for (WeakReference<TomatoStateListener> listenerRef : mListeners) {
+            if (listenerRef.get() != null) {
+                listenerRef.get().onTomatoStart();
+            }
         }
 
-        /**
-         * 停止当前的计时器。如果当前没有运行中的计时器，则不做反应。
-         */
-        public void stopTomato() {
-            onTimerEnd();
+        playBGM();
+        NotificationHelper.cancelBreakNotification(getApplicationContext());
+        NotificationHelper.startPomodoroTimerForeground(PomodoroService.this);
+    }
+
+    /**
+     * 停止当前的计时器。如果当前没有运行中的计时器，则不做反应。
+     */
+    public void stopTomato() {
+        onTimerEnd();
+
+        // notify listeners
+        for (WeakReference<TomatoStateListener> listenerRef : mListeners) {
+            if (listenerRef.get() != null) {
+                listenerRef.get().onTomatoStop();
+            }
+        }
+    }
+
+    /**
+     * 注册一个 Listner，每一个调用该方法的地方，都应该有一个配对的 {@link #unregisterTimeChangeListener}
+     * 的调用。
+     *
+     * 为了防止没有释放，listener 在内部会以弱引用的方式保存，listener 的持有者必须自己保证在 unregister
+     * 之前，对象都是存活的。
+     */
+    public void registerTimeChangeListener(@NonNull TomatoStateListener listener) {
+        // 补发一个番茄钟已经开始的消息。
+        if (mTimeSuscriber != null) {
+            listener.onTomatoStart();
+        }
+        mListeners.add(new WeakReference<>(listener));
+    }
+
+    public void unregisterTimeChangeListener(@NonNull TomatoStateListener listener) {
+        WeakReference<TomatoStateListener> findRef = null;
+        for (WeakReference<TomatoStateListener> listenerRef : mListeners) {
+            if (listenerRef.get() == listener) {
+                findRef = listenerRef;
+                break;
+            }
         }
 
-        /**
-         * 注册一个 Listner，每一个调用该方法的地方，都应该有一个配对的 {@link #unregisterTimeChangeListener}
-         * 的调用。
-         *
-         * 为了防止没有释放，listener 在内部会以弱引用的方式保存，listener 的持有者必须自己保证在 unregister
-         * 之前，对象都是存活的。
-         */
-        public void registerTimeChangeListener(@NonNull TomatoStateListener listener) {
-            // 补发一个番茄钟已经开始的消息。
-            if (mTimeSuscriber != null) {
-                listener.onTomatoStart();
-            }
-            mListeners.add(new WeakReference<>(listener));
-        }
-
-        public void unregisterTimeChangeListener(@NonNull TomatoStateListener listener) {
-            WeakReference<TomatoStateListener> findRef = null;
-            for (WeakReference<TomatoStateListener> listenerRef : mListeners) {
-                if (listenerRef.get() == listener) {
-                    findRef = listenerRef;
-                    break;
-                }
-            }
-
-            if (findRef != null) {
-                mListeners.remove(findRef);
-            }
+        if (findRef != null) {
+            mListeners.remove(findRef);
         }
     }
 
@@ -195,11 +245,12 @@ public class PomodoroService extends Service {
      */
     public interface TomatoStateListener {
         void onTomatoStart();
-        void onTomatoFinish();
+       void onTomatoStop();
+        void onTomatoComplete();
         void onTomatoTimeChange(int remainTime, int tomatoTime);
     }
 
-    private class TimeSuscriber extends Subscriber<Long> {
+    private class TimeSubscriber extends Subscriber<Long> {
         @Override
         public void onCompleted() {
             onTimerEnd();
@@ -207,7 +258,7 @@ public class PomodoroService extends Service {
             // notify listeners
             for (WeakReference<TomatoStateListener> listenerRef : mListeners) {
                 if (listenerRef.get() != null) {
-                    listenerRef.get().onTomatoFinish();
+                    listenerRef.get().onTomatoComplete();
                 }
             }
             // save data
