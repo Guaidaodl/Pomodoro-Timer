@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements TimerFragment.Tim
         PomodoroService.unbind(this, mPomodoroServiceConnection);
     }
 
-    //<editor-fold desc="Implemation of TimerFragmentDelegate">
+    //<editor-fold desc="Implementation of TimerFragmentDelegate">
     @Override
     public void startNewTomato() {
         mPomodoroService.startNewTomato(25);

@@ -22,8 +22,6 @@ import android.app.Application;
 
 import com.squareup.leakcanary.LeakCanary;
 
-import io.github.guaidaodl.pomodorotimer.data.TomatoRepository;
-import io.github.guaidaodl.pomodorotimer.data.realm.TomatoRealmDataSource;
 import io.github.guaidaodl.pomodorotimer.service.PomodoroService;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;

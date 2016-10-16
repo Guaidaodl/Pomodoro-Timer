@@ -27,7 +27,7 @@ android {
         applicationId "io.github.guaidaodl.pomodorotimer"
         minSdkVersion 21
         targetSdkVersion 24
-        versionCode 1000001002
+        versionCode 1000001003
         versionName "0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

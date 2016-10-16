@@ -30,6 +30,7 @@ import android.support.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import io.github.guaidaodl.pomodorotimer.BuildConfig;
@@ -212,7 +213,7 @@ public class PomodoroService extends Service {
     }
 
     /**
-     * 注册一个 Listner，每一个调用该方法的地方，都应该有一个配对的 {@link #unregisterTimeChangeListener}
+     * 注册一个 Listener，每一个调用该方法的地方，都应该有一个配对的 {@link #unregisterTimeChangeListener}
      * 的调用。
      *
      * 为了防止没有释放，listener 在内部会以弱引用的方式保存，listener 的持有者必须自己保证在 unregister
@@ -287,6 +288,14 @@ public class PomodoroService extends Service {
                     listenerRef.get().onTomatoTimeChange(remainTime, mTomatoTime);
                 }
             }
+
+            long minute = remainTime / 60;
+            long second = remainTime % 60;
+
+            @SuppressWarnings("deprecation")
+            Locale locale = getResources().getConfiguration().locale;
+            String timeString = String.format(locale, "%02d:%02d", minute, second);
+            NotificationHelper.notifyTomatoTime(getApplicationContext(), timeString);
         }
     }
 }

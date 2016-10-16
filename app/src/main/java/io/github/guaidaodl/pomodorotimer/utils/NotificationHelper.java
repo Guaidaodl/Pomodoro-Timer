@@ -41,7 +41,12 @@ public class NotificationHelper {
 
         service.startForeground(NOTIFICATION_ID_FOREGROUND, notification);
     }
+
     private static Notification buildNotificationForForeService(Context context) {
+        return buildNotificationForForeService(context, "25:00");
+    }
+
+    private static Notification buildNotificationForForeService(Context context, String time) {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context);
         PendingIntent pi = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class),
@@ -51,13 +56,25 @@ public class NotificationHelper {
                 PomodoroService.getIntentForStopTimer(context), PendingIntent.FLAG_UPDATE_CURRENT);
 
         return notificationBuilder.setSmallIcon(R.drawable.ic_nofication)
-                .setContentTitle("Working")
-                .setContentText("Keep")
+                .setContentTitle("Keep Calm and Work Hard")
+                .setContentText(time)
                 .setContentIntent(pi)
                 .addAction(new NotificationCompat.Action(R.drawable.ic_action_stop, "Stop", stopTimerIntent))
                 .build();
     }
 
+    /**
+     * 更新通知栏上的时间
+     *
+     * @param time 要显示的时间
+     */
+    public static void notifyTomatoTime(Context context, String time) {
+        Notification notification = buildNotificationForForeService(context, time);
+
+        NotificationManager manager =
+            (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(NOTIFICATION_ID_FOREGROUND, notification);
+    }
 
     public static void showBreakNotification(Context context) {
         NotificationManager manager =
