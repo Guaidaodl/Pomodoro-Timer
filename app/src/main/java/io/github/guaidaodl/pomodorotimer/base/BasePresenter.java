@@ -18,10 +18,6 @@
 
 package io.github.guaidaodl.pomodorotimer.base;
 
-/**
- * Created by linyb on 05/10/2016.
- */
-
 public interface BasePresenter {
     void subscribe();
 

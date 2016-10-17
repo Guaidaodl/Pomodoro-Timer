@@ -28,5 +28,6 @@
     <color name="divider">#BDBDBD</color>
 
     <color name="black">#000000</color>
-
+    <color name="white">#FFFFFF</color>
+    <color name="color_net">#fc9700</color>
 </resources>

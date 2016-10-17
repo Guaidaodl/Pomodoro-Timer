@@ -20,10 +20,6 @@ package io.github.guaidaodl.pomodorotimer.base;
 
 import android.support.annotation.NonNull;
 
-/**
- * Created by linyb on 05/10/2016.
- */
-
 public interface BaseView<T extends BasePresenter> {
     void setPresenter(@NonNull T presenter);
 }
