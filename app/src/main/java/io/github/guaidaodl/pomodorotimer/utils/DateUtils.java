@@ -74,7 +74,7 @@ public class DateUtils {
         return Pair.create(startMilliSecondOfToday, endMilliSecondOfToday);
     }
 
-    public static Pair<Long, Long> getLastSeventDaysTime() {
+    public static Pair<Long, Long> getLastSevenDaysTime() {
         return getSevenDaysTimeBefore(getTodayStartCalendar());
     }
 
@@ -91,7 +91,7 @@ public class DateUtils {
         return Pair.create(startTime, endTime);
     }
 
-    private static Calendar getTodayStartCalendar() {
+    public static Calendar getTodayStartCalendar() {
         return getStartOfDay(Calendar.getInstance());
     }
 

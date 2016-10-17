@@ -134,4 +134,10 @@ public class LineView extends View {
     private int getData(int index) {
         return data[index];
     }
+
+    public void setData(int[] data) {
+        this.data = data;
+        mInvalidate = true;
+        invalidate();
+    }
 }

@@ -21,26 +21,19 @@ package io.github.guaidaodl.pomodorotimer.ui.statistics;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.common.base.Function;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableListMultimap;
-
-import java.text.DateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.guaidaodl.pomodorotimer.R;
 import io.github.guaidaodl.pomodorotimer.data.realm.Tomato;
+import io.github.guaidaodl.pomodorotimer.ui.widget.LineView;
+import io.github.guaidaodl.pomodorotimer.utils.DateUtils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -54,6 +47,9 @@ public class StatisticsFragment extends Fragment implements StatisticsContract.V
 
     @BindView(R.id.statistic_month_count)
     TextView mMonthCountTextView;
+
+    @BindView(R.id.statistic_line_View)
+    LineView mLineView;
 
     private StatisticsContract.Presenter mPresenter;
 
@@ -109,15 +105,21 @@ public class StatisticsFragment extends Fragment implements StatisticsContract.V
     }
 
     @Override
-    public void showLastSevenDaysTomatoStatistics(
-            @NonNull ImmutableListMultimap<Long, Tomato> statistic) {
+    public void showLastSevenDaysTomatoStatistics(@NonNull ImmutableListMultimap<Long, Tomato> statistic) {
         checkNotNull(statistic);
 
-        for (Long time : statistic.keySet()) {
-            DateFormat format = DateFormat.getDateInstance();
-            String date = format.format(new Date(time));
-            Log.wtf("LINYB", date + ":" + statistic.get(time).size());
+        int []data = new int[7];
+        long time = DateUtils.getTodayStartCalendar().getTimeInMillis();
+        for (int i = 6; i >= 0; i--) {
+            if (statistic.containsKey(time)) {
+                data[i] = statistic.get(time).size();
+            } else {
+                data[i] = 0;
+            }
+            time -= 24 * 60 * 60 * 1000;
         }
+
+        mLineView.setData(data);
     }
 
     @Override

@@ -110,7 +110,7 @@ class StatisticsPresenter implements StatisticsContract.Presenter {
                         });
         mSubscriptions.add(monthSubscription);
 
-        final Pair<Long, Long> lastSevenDaysTime = DateUtils.getLastSeventDaysTime();
+        final Pair<Long, Long> lastSevenDaysTime = DateUtils.getLastSevenDaysTime();
         Subscription lastSevenDaySubscription =
                 mTomatoRepository.getTomatoWithStartTimeBetween(lastSevenDaysTime.first, lastSevenDaysTime.second)
                     .subscribe(new Action1<List<Tomato>>() {
