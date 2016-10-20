@@ -32,6 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.guaidaodl.pomodorotimer.R;
 import io.github.guaidaodl.pomodorotimer.data.realm.Tomato;
+import io.github.guaidaodl.pomodorotimer.ui.statistics.timeline.TimeLineActivity;
 import io.github.guaidaodl.pomodorotimer.ui.widget.LineChartView;
 import io.github.guaidaodl.pomodorotimer.utils.DateUtils;
 
@@ -39,6 +40,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class StatisticsFragment extends Fragment implements StatisticsContract.View {
 
+    @BindView(R.id.statistics_count)
+    View mCountView;
     @BindView(R.id.statistic_day_count)
     TextView mDayCountTextView;
 
@@ -68,6 +71,12 @@ public class StatisticsFragment extends Fragment implements StatisticsContract.V
 
         ButterKnife.bind(this, rootView);
 
+        mCountView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimeLineActivity.startActivity(getActivity());
+            }
+        });
         return rootView;
     }
 

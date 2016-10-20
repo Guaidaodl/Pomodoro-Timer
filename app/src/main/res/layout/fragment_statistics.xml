@@ -34,7 +34,7 @@
         android:layout_marginTop="20dp"
         android:paddingBottom="20dp"
         app:layout_constraintHorizontal_bias="0.0"
-        android:id="@+id/constraintLayout">
+        android:id="@+id/statistics.count">
         <TextView
             android:layout_width="84dp"
             android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
         android:layout_marginTop="20dp"
         android:background="@color/white"
         android:padding="10dp"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintTop_toBottomOf="@+id/statistics.count"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="20dp"
         app:layout_constraintRight_toRightOf="parent"

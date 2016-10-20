@@ -38,7 +38,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.statistics.StatisticsAcvitity"
             android:label="@string/statistics_label"
@@ -46,6 +45,10 @@
         </activity>
 
         <service android:name=".service.PomodoroService"/>
+
+        <activity android:name=".ui.statistics.timeline.TimeLineActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>
