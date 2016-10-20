@@ -103,8 +103,8 @@
             app:layout_constraintTop_toTopOf="@+id/textView4"/>
     </android.support.constraint.ConstraintLayout>
 
-    <io.github.guaidaodl.pomodorotimer.ui.widget.LineView
-        android:id="@+id/statistic.line_View"
+    <io.github.guaidaodl.pomodorotimer.ui.widget.LineChartView
+        android:id="@+id/statistic.line_chart_View"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="20dp"

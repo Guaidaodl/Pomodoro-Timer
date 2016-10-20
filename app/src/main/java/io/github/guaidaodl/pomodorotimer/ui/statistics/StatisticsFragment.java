@@ -32,7 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.guaidaodl.pomodorotimer.R;
 import io.github.guaidaodl.pomodorotimer.data.realm.Tomato;
-import io.github.guaidaodl.pomodorotimer.ui.widget.LineView;
+import io.github.guaidaodl.pomodorotimer.ui.widget.LineChartView;
 import io.github.guaidaodl.pomodorotimer.utils.DateUtils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -48,8 +48,8 @@ public class StatisticsFragment extends Fragment implements StatisticsContract.V
     @BindView(R.id.statistic_month_count)
     TextView mMonthCountTextView;
 
-    @BindView(R.id.statistic_line_View)
-    LineView mLineView;
+    @BindView(R.id.statistic_line_chart_View)
+    LineChartView mLineChartView;
 
     private StatisticsContract.Presenter mPresenter;
 
@@ -119,7 +119,7 @@ public class StatisticsFragment extends Fragment implements StatisticsContract.V
             time -= 24 * 60 * 60 * 1000;
         }
 
-        mLineView.setData(data);
+        mLineChartView.setData(data);
     }
 
     @Override

@@ -28,7 +28,7 @@ import io.github.guaidaodl.pomodorotimer.R;
 /**
  * @author Guaidaodl
  */
-public class LineView extends View {
+public class LineChartView extends View {
 
     private int []data = {8, 6, 4, 16, 2, 9, 10};
     // 数据是否是有效的
@@ -40,15 +40,15 @@ public class LineView extends View {
     private Paint mPaint;
     private Paint mCoordinatePaint;
 
-    public LineView(Context context) {
+    public LineChartView(Context context) {
         this(context, null);
     }
 
-    public LineView(Context context, AttributeSet attrs) {
+    public LineChartView(Context context, AttributeSet attrs) {
         this(context, attrs, R.style.AppTheme);
     }
 
-    public LineView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public LineChartView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
         mPaint = new Paint();
@@ -75,7 +75,7 @@ public class LineView extends View {
 
         float w = width / (getDataCount() - 1);
         float h = height / (mMax * 1.2f);
-        drawNet(canvas, w, h);
+        drawGridLine(canvas, w, h);
 
         float preX = getPaddingStart();
         float preY = height - h * getData(0) + getPaddingTop();
@@ -91,7 +91,7 @@ public class LineView extends View {
         }
     }
 
-    private void drawNet(Canvas canvas, float w, float h) {
+    private void drawGridLine(Canvas canvas, float w, float h) {
         int paddingBottom = getPaddingBottom();
         int paddingTop = getPaddingTop();
         int paddingStart = getPaddingStart();
