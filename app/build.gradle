@@ -16,6 +16,7 @@
  */
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 apply plugin: 'android-apt'
 apply plugin: 'realm-android'
 apply plugin: 'jacoco'
@@ -57,6 +58,9 @@ android {
             variant.setIgnore(true);
         }
     }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
 }
 
 dependencies {
@@ -84,4 +88,8 @@ dependencies {
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
 
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }
