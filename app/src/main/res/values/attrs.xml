@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2016.  Guaidaodl
+  ~  Copyright (c) 2016.  Guaidaodl
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -14,20 +13,18 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   ~
+  ~
   -->
 
 <resources>
 
-    <color name="primaryColor">#33A5BD</color>
-    <color name="primaryDarkColor">#3DCBBB</color>
-    <color name="primaryColorLight">#BBDEFB</color>
-    <color name="accentColor">#FF5722</color>
-    <color name="primaryTextColor">#FFFFFF</color>
-    <color name="secondaryTextColor">#CAE1F4</color>
-    <color name="iconAndTextColor">#FFFFFF</color>
-    <color name="divider">#BDBDBD</color>
+    <!-- Declare custom theme attributes that allow changing which styles are
+         used for button bars depending on the API level.
+         ?android:attr/buttonBarStyle is new as of API 11 so this is
+         necessary to support previous API levels. -->
+    <declare-styleable name="ButtonBarContainerTheme">
+        <attr name="metaButtonBarStyle" format="reference"/>
+        <attr name="metaButtonBarButtonStyle" format="reference"/>
+    </declare-styleable>
 
-    <color name="black">#000000</color>
-    <color name="white">#FFFFFF</color>
-    <color name="color_net">#fc9700</color>
 </resources>

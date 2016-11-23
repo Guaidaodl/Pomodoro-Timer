@@ -18,19 +18,23 @@
 
 package io.github.guaidaodl.pomodorotimer.ui.timer
 
-import android.content.Context
-import io.github.guaidaodl.pomodorotimer.base.BasePresenter
-import io.github.guaidaodl.pomodorotimer.base.BaseView
+import android.support.v7.app.AppCompatActivity
+import android.os.Bundle
+import io.github.guaidaodl.pomodorotimer.R
 
-interface TimerContract {
+class TimerActivity : AppCompatActivity() {
 
-    interface View : BaseView<BasePresenter> {
-        fun showTime(second: Int)
-    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_timer)
 
-    interface Presenter : BasePresenter {
-        fun bindToTimerSevice(context: Context)
-        fun startTimer()
-        fun stopTimer()
+        val fm = supportFragmentManager
+        var fragment = fm.findFragmentById(R.id.timer_fragment_container) as? TimerFragment
+        if (fragment == null) {
+            fragment = TimerFragment()
+            fm.beginTransaction()
+                    .add(R.id.timer_fragment_container, fragment)
+                    .commit()
+        }
     }
 }

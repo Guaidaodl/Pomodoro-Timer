@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2016.  Guaidaodl
+  ~  Copyright (c) 2016.  Guaidaodl
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -13,47 +14,61 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   ~
+  ~
   -->
-
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/bg_timer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="io.github.guaidaodl.pomodorotimer.ui.timer.TimerFragment">
+    android:layout_height="match_parent">
 
-
-    <Button
-        android:id="@+id/main.timer.control"
-        android:text="@string/main_timer_start"
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:elevation="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="100dp"
-        android:layout_marginTop="100dp"
-        app:layout_constraintTop_toBottomOf="@+id/main.timer.time"
-        app:layout_constraintVertical_bias="0.0"
-        android:layout_marginStart="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:srcCompat="@drawable/ic_data"
+        android:id="@+id/imageView"
+        android:layout_marginEnd="18dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-    <TextView
-        android:id="@+id/main.timer.time"
-        android:text="@string/main_timer_default_time"
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="100sp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:srcCompat="@drawable/ic_menu"
+        android:id="@+id/imageView2"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="18dp"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <view
+        android:layout_height="200dp"
+        class="android.support.v4.widget.Space"
+        android:id="@+id/view"
+        android:layout_width="200dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginStart="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="16dp"
-        app:layout_constraintVertical_bias="0.25"/>
+        app:layout_constraintVertical_bias="0.3"/>
 
+    <Button
+        android:text="@string/timer_start"
+        android:background="@drawable/bg_timer_button"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:id="@+id/button"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="122dp"
+        app:layout_constraintTop_toBottomOf="@+id/view"
+        android:layout_width="189dp"
+        android:layout_height="63dp"/>
 </android.support.constraint.ConstraintLayout>

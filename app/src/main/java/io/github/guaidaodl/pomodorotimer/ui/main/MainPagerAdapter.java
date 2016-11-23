@@ -23,7 +23,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import io.github.guaidaodl.pomodorotimer.R;
-import io.github.guaidaodl.pomodorotimer.ui.timer.TimerFragment;
+import io.github.guaidaodl.pomodorotimer.ui.timer.TimerFragmentBac;
 
 /**
  * Created by linyb on 27/09/2016.
@@ -45,7 +45,7 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return TimerFragment.newInstance();
+                return TimerFragmentBac.newInstance();
             default:
                 return BlankFragment.newInstance();
         }

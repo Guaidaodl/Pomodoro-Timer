@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2016.  Guaidaodl
+  ~  Copyright (c) 2016.  Guaidaodl
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -14,20 +14,21 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   ~
+  ~
   -->
 
-<resources>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".ui.timer.TimerActivity">
 
-    <color name="primaryColor">#33A5BD</color>
-    <color name="primaryDarkColor">#3DCBBB</color>
-    <color name="primaryColorLight">#BBDEFB</color>
-    <color name="accentColor">#FF5722</color>
-    <color name="primaryTextColor">#FFFFFF</color>
-    <color name="secondaryTextColor">#CAE1F4</color>
-    <color name="iconAndTextColor">#FFFFFF</color>
-    <color name="divider">#BDBDBD</color>
+    <FrameLayout
+        android:id="@+id/timer.fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
 
-    <color name="black">#000000</color>
-    <color name="white">#FFFFFF</color>
-    <color name="color_net">#fc9700</color>
-</resources>
+</android.support.design.widget.CoordinatorLayout>

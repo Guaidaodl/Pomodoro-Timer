@@ -29,7 +29,7 @@
     <string name="action_settings">设置</string>
 
     <!-- Timer Tab-->
-    <string name="main_timer_start">开始</string>
+    <string name="timer_start">开始</string>
     <string name="main_timer_stop">中断</string>
     <string name="main_timer_default_time">25:00</string>
 
@@ -42,4 +42,6 @@
     <!--Notification-->
     <string name="notification_tomato_end_content_title">完成一个番茄</string>
     <string name="notification_tomato_end_content_text">休息一下吧</string>
+
+    <string name="title_activity_timer">TimerActivity</string>
 </resources>

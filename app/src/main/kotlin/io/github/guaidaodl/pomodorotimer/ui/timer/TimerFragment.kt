@@ -18,19 +18,24 @@
 
 package io.github.guaidaodl.pomodorotimer.ui.timer
 
-import android.content.Context
-import io.github.guaidaodl.pomodorotimer.base.BasePresenter
-import io.github.guaidaodl.pomodorotimer.base.BaseView
+import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import io.github.guaidaodl.pomodorotimer.R
 
-interface TimerContract {
+/**
+ * Created by Guaidaodl on 23/11/2016.
+ */
+class TimerFragment : Fragment() {
 
-    interface View : BaseView<BasePresenter> {
-        fun showTime(second: Int)
-    }
 
-    interface Presenter : BasePresenter {
-        fun bindToTimerSevice(context: Context)
-        fun startTimer()
-        fun stopTimer()
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        if (container != null) {
+            return inflater.inflate(R.layout.fragment_timer, container, false)
+        } else {
+            return null
+        }
     }
 }

@@ -37,9 +37,9 @@ import butterknife.ButterKnife;
 import io.github.guaidaodl.pomodorotimer.R;
 import io.github.guaidaodl.pomodorotimer.service.PomodoroService;
 import io.github.guaidaodl.pomodorotimer.ui.statistics.StatisticsAcvitity;
-import io.github.guaidaodl.pomodorotimer.ui.timer.TimerFragment;
+import io.github.guaidaodl.pomodorotimer.ui.timer.TimerFragmentBac;
 
-public class MainActivity extends AppCompatActivity implements TimerFragment.TimerFragmentDelegate {
+public class MainActivity extends AppCompatActivity implements TimerFragmentBac.TimerFragmentDelegate {
     @BindView(R.id.main_pager)
     ViewPager mMainViewPager;
 

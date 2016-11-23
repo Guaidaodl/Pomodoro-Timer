@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016.  Guaidaodl
+ *  Copyright (c) 2016.  Guaidaodl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  *
  */
 
@@ -37,15 +38,15 @@ import butterknife.OnClick;
 import io.github.guaidaodl.pomodorotimer.R;
 import io.github.guaidaodl.pomodorotimer.service.PomodoroService;
 
-public class TimerFragment extends Fragment implements PomodoroService.TomatoStateListener{
-    private static final String TAG = "TimerFragment";
+public class TimerFragmentBac extends Fragment implements PomodoroService.TomatoStateListener{
+    private static final String TAG = "TimerFragmentBac";
 
     private static final String INTIAL_TIME = "25:00";
 
     @BindView(R.id.main_timer_control)
     Button mStartButton;
 
-    @BindString(R.string.main_timer_start)
+    @BindString(R.string.timer_start)
     String mStartText;
 
     @BindString(R.string.main_timer_stop)
@@ -60,11 +61,11 @@ public class TimerFragment extends Fragment implements PomodoroService.TomatoSta
 
     private boolean mTimerRunning = false;
 
-    public static TimerFragment newInstance() {
-        return new TimerFragment();
+    public static TimerFragmentBac newInstance() {
+        return new TimerFragmentBac();
     }
 
-    public TimerFragment() {}
+    public TimerFragmentBac() {}
 
     //<editor-fold desc="Life Cycle">
     @Override
@@ -82,7 +83,7 @@ public class TimerFragment extends Fragment implements PomodoroService.TomatoSta
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_timer, container, false);
+        View root = inflater.inflate(R.layout.fragment_timer_bak, container, false);
 
         ButterKnife.bind(this, root);
 
